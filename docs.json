@@ -953,8 +953,7 @@
   },
   "navbar": {
     "primary": {
-      "type": "button",
-      "label": "Dashboard",
+      "type": "github",
       "href": "https://github.com/adolfcna"
     }
   },
