@@ -3,9 +3,9 @@
   "theme": "almond",
   "name": "ATTVDEF",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#00B8FF",
+    "light": "#38D9FF",
+    "dark": "#0066CC"
   },
   "favicon": {
     "light": "/images/icon.png",
