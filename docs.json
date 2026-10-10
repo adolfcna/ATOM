@@ -32,7 +32,8 @@
         "pages": [
           "index"
         ],
-        "expanded": true
+        "expanded": true,
+        "icon": "house"
       },
       {
         "group": "Active Directory",
@@ -43,17 +44,20 @@
             "pages": [
               "docs/Active Directory/Mimikatz/CheatSheet"
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "key-round"
           },
           {
             "group": "Rubeus",
             "pages": [
               "docs/Active Directory/Rubeus/Rubeus"
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "ticket"
           }
         ],
-        "expanded": false
+        "expanded": false,
+        "icon": "network"
       },
       {
         "group": "Internals",
@@ -68,7 +72,8 @@
                   "docs/Internals/Binary Structure & Compile/ELF/ELF",
                   "docs/Internals/Binary Structure & Compile/ELF/SE Mitigation"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "file-code"
               },
               {
                 "group": "PE",
@@ -76,10 +81,12 @@
                   "docs/Internals/Binary Structure & Compile/PE/Compile Time",
                   "docs/Internals/Binary Structure & Compile/PE/PE"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "file-code"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "file-code"
           },
           {
             "group": "Microsoft Windows",
@@ -89,7 +96,8 @@
                 "pages": [
                   "docs/Internals/Microsoft Windows/COM/Powershell"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "puzzle"
               },
               {
                 "group": "EDRs",
@@ -104,21 +112,24 @@
                   "docs/Internals/Microsoft Windows/EDRs/PsSetLoadImageNotifyRoutine",
                   "docs/Internals/Microsoft Windows/EDRs/WFP Architecture"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "shield-check"
               },
               {
                 "group": "Multiple Execution",
                 "pages": [
                   "docs/Internals/Microsoft Windows/Multiple Execution/Multiple instances"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "workflow"
               },
               {
                 "group": "Process & Thread",
                 "pages": [
                   "docs/Internals/Microsoft Windows/Process & Thread/Thread"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "workflow"
               },
               {
                 "group": "Programming",
@@ -128,7 +139,8 @@
                     "pages": [
                       "docs/Internals/Microsoft Windows/Programming/python/scraper"
                     ],
-                    "expanded": false
+                    "expanded": false,
+                    "icon": "code-2"
                   },
                   {
                     "group": "WIN32",
@@ -137,10 +149,12 @@
                       "docs/Internals/Microsoft Windows/Programming/WIN32/FindWindow",
                       "docs/Internals/Microsoft Windows/Programming/WIN32/Windows Services"
                     ],
-                    "expanded": false
+                    "expanded": false,
+                    "icon": "code-2"
                   }
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "code-2"
               },
               {
                 "group": "RING 0",
@@ -148,14 +162,16 @@
                   "docs/Internals/Microsoft Windows/RING 0/First Driver",
                   "docs/Internals/Microsoft Windows/RING 0/Windows Driver Communication"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "shield"
               },
               {
                 "group": "WINDBG",
                 "pages": [
                   "docs/Internals/Microsoft Windows/WINDBG/Windbg Cheatsheet"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "bug"
               },
               {
                 "group": "Windows Architecture",
@@ -163,20 +179,24 @@
                   "docs/Internals/Microsoft Windows/Windows Architecture/System Call",
                   "docs/Internals/Microsoft Windows/Windows Architecture/Windows Kernel and Security Architecture"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "panels-top-left"
               },
               {
                 "group": "Windows Version",
                 "pages": [
                   "docs/Internals/Microsoft Windows/Windows Version/Get Windows Version"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "panels-top-left"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "panels-top-left"
           }
         ],
-        "expanded": false
+        "expanded": false,
+        "icon": "cpu"
       },
       {
         "group": "Malware Analysis",
@@ -187,10 +207,12 @@
               "docs/Malware Analysis/Binary Analysis/Malware Analysis Techniques Description",
               "docs/Malware Analysis/Binary Analysis/Tools"
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "bug"
           }
         ],
-        "expanded": false
+        "expanded": false,
+        "icon": "bug"
       },
       {
         "group": "Mitre Attack",
@@ -210,13 +232,16 @@
                     "pages": [
                       "docs/Mitre Attack/Command & Control TA0011/C2/MSF/MSF"
                     ],
-                    "expanded": false
+                    "expanded": false,
+                    "icon": "folder-tree"
                   }
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "network"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "network"
           },
           {
             "group": "Credential Access TA006",
@@ -229,7 +254,8 @@
                 "pages": [
                   "docs/Mitre Attack/Credential Access TA006/Cached Domain Credentials/CMDkey"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "key-round"
               },
               {
                 "group": "OS Credential Dumping",
@@ -237,7 +263,8 @@
                   "docs/Mitre Attack/Credential Access TA006/OS Credential Dumping/DCSync",
                   "docs/Mitre Attack/Credential Access TA006/OS Credential Dumping/etc passwd & shadow"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               },
               {
                 "group": "Steal or Forge Kerberos Ticket",
@@ -248,17 +275,20 @@
                   "docs/Mitre Attack/Credential Access TA006/Steal or Forge Kerberos Ticket/Kerberoast",
                   "docs/Mitre Attack/Credential Access TA006/Steal or Forge Kerberos Ticket/Silver Ticket"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "key-round"
               },
               {
                 "group": "Unsecured Credentials",
                 "pages": [
                   "docs/Mitre Attack/Credential Access TA006/Unsecured Credentials/Local Administrator Password Solution"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "key-round"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "key-round"
           },
           {
             "group": "Defense Impairment TA0112",
@@ -269,10 +299,12 @@
                   "docs/Mitre Attack/Defense Impairment TA0112/Disable or Modify Tools/Bypass AV",
                   "docs/Mitre Attack/Defense Impairment TA0112/Disable or Modify Tools/Invisible Shell"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "shield-check"
           },
           {
             "group": "Discovery TA0007",
@@ -280,7 +312,8 @@
               "docs/Mitre Attack/Discovery TA0007/Domain Enumeration (Powerview)",
               "docs/Mitre Attack/Discovery TA0007/Stealth Discovery"
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "scan-search"
           },
           {
             "group": "Execution TA0002",
@@ -298,7 +331,8 @@
                         "pages": [
                           "docs/Mitre Attack/Execution TA0002/Command and Scripting Interpreter/Powershell/PS Remoting/PS Remoting"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "WMI",
@@ -314,37 +348,44 @@
                           "docs/Mitre Attack/Execution TA0002/Command and Scripting Interpreter/Powershell/WMI/Start & Kill Process",
                           "docs/Mitre Attack/Execution TA0002/Command and Scripting Interpreter/Powershell/WMI/WMI Remote"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "square-terminal"
                       }
                     ],
-                    "expanded": false
+                    "expanded": false,
+                    "icon": "square-terminal"
                   }
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "square-terminal"
               },
               {
                 "group": "Hijack Execution Flow",
                 "pages": [
                   "docs/Mitre Attack/Execution TA0002/Hijack Execution Flow/Services Permissions Weakness"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "square-terminal"
               },
               {
                 "group": "Scheduled Task Job",
                 "pages": [
                   "docs/Mitre Attack/Execution TA0002/Scheduled Task Job/Scheduled Task"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "calendar-clock"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "square-terminal"
           },
           {
             "group": "Impact TA0040",
             "pages": [
               "docs/Mitre Attack/Impact TA0040/Network Denial of Service"
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "zap"
           },
           {
             "group": "Initial Access TA0001",
@@ -367,7 +408,8 @@
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/API Abuse/IDOR",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/API Abuse/Mass Assignment"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "code-2"
                       },
                       {
                         "group": "BruteForce",
@@ -376,7 +418,8 @@
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/BruteForce/OpenSSL",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/BruteForce/Weak CAPTCHA Bypass"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "shield-check"
                       },
                       {
                         "group": "Code Injection",
@@ -385,14 +428,16 @@
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Code Injection/SSTI",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Code Injection/Tools"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "Command Injection",
                         "pages": [
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Command Injection/Ci"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "puzzle"
                       },
                       {
                         "group": "CSRF & CORS",
@@ -401,14 +446,16 @@
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/CSRF & CORS/CSRF",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/CSRF & CORS/SOP vs CORS"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "Force Browsing",
                         "pages": [
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Force Browsing/Force Browsing"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "HTTP Smuggling",
@@ -416,28 +463,32 @@
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/HTTP Smuggling/Connection & Transfer",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/HTTP Smuggling/HRS"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "Insecure Deserialization",
                         "pages": [
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Insecure Deserialization/ID"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "JWT",
                         "pages": [
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/JWT/JWT"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "Open Redirect",
                         "pages": [
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Open Redirect/op"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "Session Hijacking",
@@ -445,7 +496,8 @@
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Session Hijacking/Cookie",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Session Hijacking/HFGT"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "shield-off"
                       },
                       {
                         "group": "SQLi",
@@ -457,7 +509,8 @@
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SQLi/OOB SQLi",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SQLi/SQLMAP"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "SSRF",
@@ -465,21 +518,24 @@
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SSRF/Server Site Request Forgery",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SSRF/SSRF URL Validation Bypass"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "Verb Tamper",
                         "pages": [
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Verb Tamper/verb tamper"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "Vulnerability Scanner",
                         "pages": [
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Vulnerability Scanner/Nuclei"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "Web Cache",
@@ -488,7 +544,8 @@
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Web Cache/WCF",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Web Cache/WCP"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "shield-check"
                       },
                       {
                         "group": "XML",
@@ -498,7 +555,8 @@
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XML/XML RPC",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XML/XXE"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "XSS",
@@ -507,20 +565,24 @@
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS/Payloads",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS/XSS"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       }
                     ],
-                    "expanded": false
+                    "expanded": false,
+                    "icon": "shield-check"
                   }
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "shield-check"
               },
               {
                 "group": "Phishing",
                 "pages": [
                   "docs/Mitre Attack/Initial Access TA0001/Phishing/Phishing Campaign"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               },
               {
                 "group": "Wi-Fi Networks T1669",
@@ -528,10 +590,12 @@
                   "docs/Mitre Attack/Initial Access TA0001/Wi-Fi Networks T1669/Attack Wi-Fi",
                   "docs/Mitre Attack/Initial Access TA0001/Wi-Fi Networks T1669/Wi-Fi Security Protocols"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "network"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "shield-check"
           },
           {
             "group": "Lateral Movement TA0008",
@@ -543,7 +607,8 @@
                   "docs/Mitre Attack/Lateral Movement TA0008/Lateral Tool Transfer/Netloder",
                   "docs/Mitre Attack/Lateral Movement TA0008/Lateral Tool Transfer/Winrm"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "send"
               },
               {
                 "group": "Remote Services",
@@ -554,7 +619,8 @@
                   "docs/Mitre Attack/Lateral Movement TA0008/Remote Services/Windows Management Instrumentation",
                   "docs/Mitre Attack/Lateral Movement TA0008/Remote Services/Windows Remote Management"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               },
               {
                 "group": "Use Alternate Authentication Material",
@@ -562,10 +628,12 @@
                   "docs/Mitre Attack/Lateral Movement TA0008/Use Alternate Authentication Material/OPTH",
                   "docs/Mitre Attack/Lateral Movement TA0008/Use Alternate Authentication Material/PTH"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "lock-keyhole"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "network"
           },
           {
             "group": "Persistence TA0003",
@@ -577,21 +645,24 @@
                   "docs/Mitre Attack/Persistence TA0003/Account Manipulation/Additional Local or Domain Groups",
                   "docs/Mitre Attack/Persistence TA0003/Account Manipulation/DSRM"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               },
               {
                 "group": "Boot or Logon Autostart Execution",
                 "pages": [
                   "docs/Mitre Attack/Persistence TA0003/Boot or Logon Autostart Execution/Registry Run Keys - Startup Folder"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "square-terminal"
               },
               {
                 "group": "Create or Modify System Process",
                 "pages": [
                   "docs/Mitre Attack/Persistence TA0003/Create or Modify System Process/Windows Service"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "workflow"
               },
               {
                 "group": "Modify Authentication Process",
@@ -599,10 +670,12 @@
                   "docs/Mitre Attack/Persistence TA0003/Modify Authentication Process/Security Support Provider",
                   "docs/Mitre Attack/Persistence TA0003/Modify Authentication Process/Skeleton SSP"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "workflow"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "calendar-clock"
           },
           {
             "group": "Privilege Escalation TA0004",
@@ -613,7 +686,8 @@
                   "docs/Mitre Attack/Privilege Escalation TA0004/Abuse Elevation Control Mechanism/Bypass User Account Control",
                   "docs/Mitre Attack/Privilege Escalation TA0004/Abuse Elevation Control Mechanism/Sudo and Sudo Caching"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               },
               {
                 "group": "Access Token Manipulation",
@@ -625,10 +699,12 @@
                       "docs/Mitre Attack/Privilege Escalation TA0004/Access Token Manipulation/Token Impersonation Theft/Kernel-Level Token Stealing",
                       "docs/Mitre Attack/Privilege Escalation TA0004/Access Token Manipulation/Token Impersonation Theft/Token Impersonation"
                     ],
-                    "expanded": false
+                    "expanded": false,
+                    "icon": "folder-tree"
                   }
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               },
               {
                 "group": "Automation",
@@ -636,14 +712,16 @@
                   "docs/Mitre Attack/Privilege Escalation TA0004/Automation/PowerSploit",
                   "docs/Mitre Attack/Privilege Escalation TA0004/Automation/PrivescCheck"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               },
               {
                 "group": "Boot or Logon Autostart Execution",
                 "pages": [
                   "docs/Mitre Attack/Privilege Escalation TA0004/Boot or Logon Autostart Execution/Registry Run keys Startup Folder"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "square-terminal"
               },
               {
                 "group": "DC Escalation",
@@ -651,17 +729,20 @@
                   "docs/Mitre Attack/Privilege Escalation TA0004/DC Escalation/Delegation",
                   "docs/Mitre Attack/Privilege Escalation TA0004/DC Escalation/Resource-Based Constrained Delegation RBCD"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               },
               {
                 "group": "Exploitation for Privilege Escalation",
                 "pages": [
                   "docs/Mitre Attack/Privilege Escalation TA0004/Exploitation for Privilege Escalation/Dynamic Linker Hijacking"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "shield-check"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "arrow-up-circle"
           },
           {
             "group": "Reconnaissance TA0043",
@@ -676,7 +757,8 @@
               "docs/Mitre Attack/Reconnaissance TA0043/SNMP",
               "docs/Mitre Attack/Reconnaissance TA0043/SSH"
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "scan-search"
           },
           {
             "group": "Resource Development TA0042",
@@ -695,7 +777,8 @@
                         "pages": [
                           "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Exploit/ShellCode/Windows x64 Assembly"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "square-terminal"
                       },
                       {
                         "group": "Tools",
@@ -703,10 +786,12 @@
                           "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Exploit/Tools/pwn",
                           "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Exploit/Tools/rizin"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       }
                     ],
-                    "expanded": false
+                    "expanded": false,
+                    "icon": "shield-check"
                   },
                   {
                     "group": "Malware",
@@ -717,14 +802,16 @@
                           "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Combine Method/DAR&AES",
                           "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Combine Method/DAR&XOR"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "puzzle"
                       },
                       {
                         "group": "Credential Dumping",
                         "pages": [
                           "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Credential Dumping/Dumping Lsass without Mimikatz"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "Hooking",
@@ -733,14 +820,16 @@
                           "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Hooking/IAT Hooking",
                           "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Hooking/In-line Patching"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "Native",
                         "pages": [
                           "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Native/Basic"
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "folder-tree"
                       },
                       {
                         "group": "Process Injection",
@@ -750,21 +839,24 @@
                             "pages": [
                               "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Code Cave Injection/Code Cave injection Method"
                             ],
-                            "expanded": false
+                            "expanded": false,
+                            "icon": "folder-tree"
                           },
                           {
                             "group": "DLL Injection",
                             "pages": [
                               "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/DLL Injection/DLL Injection"
                             ],
-                            "expanded": false
+                            "expanded": false,
+                            "icon": "folder-tree"
                           },
                           {
                             "group": "Process Hollowing",
                             "pages": [
                               "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Process Hollowing/Load Mimikatz"
                             ],
-                            "expanded": false
+                            "expanded": false,
+                            "icon": "workflow"
                           },
                           {
                             "group": "Reflective DLL Loader",
@@ -772,7 +864,8 @@
                               "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Reflective DLL Loader/Reflective DLL Loading",
                               "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Reflective DLL Loader/sRDI"
                             ],
-                            "expanded": false
+                            "expanded": false,
+                            "icon": "folder-tree"
                           },
                           {
                             "group": "Shellcode Injection",
@@ -783,14 +876,16 @@
                                   "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/APC Shellcode Injection/APC Injection",
                                   "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/APC Shellcode Injection/EarlyBird"
                                 ],
-                                "expanded": false
+                                "expanded": false,
+                                "icon": "square-terminal"
                               },
                               {
                                 "group": "Different Section Injection",
                                 "pages": [
                                   "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Different Section Injection/Shellcode Injection"
                                 ],
-                                "expanded": false
+                                "expanded": false,
+                                "icon": "folder-tree"
                               },
                               {
                                 "group": "Encryption",
@@ -798,41 +893,48 @@
                                   "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Encryption/AES",
                                   "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Encryption/XOR"
                                 ],
-                                "expanded": false
+                                "expanded": false,
+                                "icon": "folder-tree"
                               },
                               {
                                 "group": "Heaven's Gate",
                                 "pages": [
                                   "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Heaven's Gate/Heaven's Gate"
                                 ],
-                                "expanded": false
+                                "expanded": false,
+                                "icon": "folder-tree"
                               },
                               {
                                 "group": "IPC Shellcode Injection",
                                 "pages": [
                                   "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/IPC Shellcode Injection/NT Section Mapping Injection"
                                 ],
-                                "expanded": false
+                                "expanded": false,
+                                "icon": "square-terminal"
                               },
                               {
                                 "group": "Native API",
                                 "pages": [
                                   "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Native API/Native Classic Injection"
                                 ],
-                                "expanded": false
+                                "expanded": false,
+                                "icon": "folder-tree"
                               },
                               {
                                 "group": "Thread Context Hijacking",
                                 "pages": [
                                   "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Thread Context Hijacking/Context Injection With AES Encryption"
                                 ],
-                                "expanded": false
+                                "expanded": false,
+                                "icon": "workflow"
                               }
                             ],
-                            "expanded": false
+                            "expanded": false,
+                            "icon": "square-terminal"
                           }
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "workflow"
                       },
                       {
                         "group": "ShellCode Execution",
@@ -842,14 +944,16 @@
                             "pages": [
                               "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/ShellCode Execution/Different Section Injection/Shellcode Injection"
                             ],
-                            "expanded": false
+                            "expanded": false,
+                            "icon": "folder-tree"
                           },
                           {
                             "group": "Encode",
                             "pages": [
                               "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/ShellCode Execution/Encode/Base64"
                             ],
-                            "expanded": false
+                            "expanded": false,
+                            "icon": "folder-tree"
                           },
                           {
                             "group": "Encryption",
@@ -857,19 +961,24 @@
                               "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/ShellCode Execution/Encryption/AES",
                               "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/ShellCode Execution/Encryption/XOR"
                             ],
-                            "expanded": false
+                            "expanded": false,
+                            "icon": "folder-tree"
                           }
                         ],
-                        "expanded": false
+                        "expanded": false,
+                        "icon": "square-terminal"
                       }
                     ],
-                    "expanded": false
+                    "expanded": false,
+                    "icon": "folder-tree"
                   }
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "folder-tree"
           },
           {
             "group": "Stealth TA0005",
@@ -879,14 +988,16 @@
                 "pages": [
                   "docs/Mitre Attack/Stealth TA0005/Hijack Execution Flow/DLL Search Order Hijacking"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "square-terminal"
               },
               {
                 "group": "Indicator Removal",
                 "pages": [
                   "docs/Mitre Attack/Stealth TA0005/Indicator Removal/Indicator Removal"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               },
               {
                 "group": "Obfuscated Files or Information",
@@ -897,17 +1008,20 @@
                     "pages": [
                       "docs/Mitre Attack/Stealth TA0005/Obfuscated Files or Information/AMSI/Bypass AMSI"
                     ],
-                    "expanded": false
+                    "expanded": false,
+                    "icon": "folder-tree"
                   },
                   {
                     "group": "OLLVM",
                     "pages": [
                       "docs/Mitre Attack/Stealth TA0005/Obfuscated Files or Information/OLLVM/Modern Obfuscation Landscape"
                     ],
-                    "expanded": false
+                    "expanded": false,
+                    "icon": "folder-tree"
                   }
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "files"
               },
               {
                 "group": "Rootkit",
@@ -919,23 +1033,28 @@
                       "docs/Mitre Attack/Stealth TA0005/Rootkit/Direct Kernel Object Manipulation/Hide Driver",
                       "docs/Mitre Attack/Stealth TA0005/Rootkit/Direct Kernel Object Manipulation/Hide Process"
                     ],
-                    "expanded": false
+                    "expanded": false,
+                    "icon": "shield"
                   }
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "folder-tree"
               },
               {
                 "group": "System Binary Proxy Execution",
                 "pages": [
                   "docs/Mitre Attack/Stealth TA0005/System Binary Proxy Execution/Mshta"
                 ],
-                "expanded": false
+                "expanded": false,
+                "icon": "square-terminal"
               }
             ],
-            "expanded": false
+            "expanded": false,
+            "icon": "folder-tree"
           }
         ],
-        "expanded": false
+        "expanded": false,
+        "icon": "crosshair"
       },
       {
         "group": "OS Command Cheat Sheet",
@@ -943,7 +1062,8 @@
           "docs/OS Command Cheat Sheet/Linux Bash Command Cheat Sheet",
           "docs/OS Command Cheat Sheet/Windows CMD & PowerShell Cheat Sheet"
         ],
-        "expanded": false
+        "expanded": false,
+        "icon": "square-terminal"
       }
     ]
   },
