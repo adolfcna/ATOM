@@ -1,20 +1,69 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "almond",
+  "theme": "mint",
   "name": "ATTVDEF",
   "colors": {
-    "primary": "#00B8FF",
-    "light": "#38D9FF",
-    "dark": "#0066CC"
+    "primary": "#FF3B30",
+    "light": "#FF6B6B",
+    "dark": "#C1121F"
   },
   "favicon": {
     "light": "/images/icon.png",
     "dark": "/images/icon.png"
   },
+  "logo": {
+    "light": "/images/icon.png",
+    "dark": "/images/icon.png"
+  },
+  "appearance": {
+    "default": "dark",
+    "inheritance": "desktop"
+  },
+  "styling": {
+    "codeblocks": "dark"
+  },
+  "interaction": {
+    "drilldown": true
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/adolfcna"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/adolfcna",
+      "github": "https://github.com/adolfcna",
+      "linkedin": "https://www.linkedin.com/in/adolfcna"
+    }
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true
+  },
+  "seo": {
+    "metatags": {
+      "adolfcna": "cheatsheet",
+      "redteam": "red team cheat sheet"
+    }
+  },
   "navigation": {
     "groups": [
       {
-        "group": "Home",
+        "group": "Getting Started",
         "pages": [
           "index"
         ],
@@ -29,6 +78,7 @@
           "docs/Active Directory/Cheat sheet",
           {
             "group": "Mimikatz",
+            "icon": "key",
             "pages": [
               "docs/Active Directory/Mimikatz/CheatSheet"
             ],
@@ -36,6 +86,7 @@
           },
           {
             "group": "Rubeus",
+            "icon": "key",
             "pages": [
               "docs/Active Directory/Rubeus/Rubeus"
             ],
@@ -49,6 +100,7 @@
         "pages": [
           {
             "group": "Binary Structure & Compile",
+            "icon": "code",
             "pages": [
               {
                 "group": "ELF",
@@ -72,6 +124,7 @@
           },
           {
             "group": "Microsoft Windows",
+            "icon": "windows",
             "pages": [
               {
                 "group": "COM",
@@ -172,6 +225,7 @@
         "pages": [
           {
             "group": "Binary Analysis",
+            "icon": "search",
             "pages": [
               "docs/Malware Analysis/Binary Analysis/Malware Analysis Techniques Description",
               "docs/Malware Analysis/Binary Analysis/Tools"
@@ -182,7 +236,7 @@
       },
       {
         "anchor": "Mitre Attack",
-        "icon": "shield",
+        "icon": "sword",
         "pages": [
           {
             "group": "Command & Control TA0011",
@@ -934,46 +988,5 @@
         ]
       }
     ]
-  },
-  "logo": {
-    "light": "/images/icon.png",
-    "dark": "/images/icon.png"
-  },
-  "navbar": {
-    "primary": {
-      "type": "github",
-      "href": "https://github.com/adolfcna"
-    }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/adolfcna",
-      "github": "https://github.com/adolfcna",
-      "linkedin": "https://www.linkedin.com/in/adolfcna"
-    }
-  },
-  "styling": {
-    "codeblocks": "dark"
-  },
-  "interaction": {
-    "drilldown": true
-  },
-  "seo": {
-    "metatags": {
-      "adolfcna": "cheatsheet",
-      "redteam": "red team cheat sheet"
-    }
   }
 }
