@@ -1,0 +1,152 @@
+---
+title: ELF Structure & Dynamic Linking
+description: Comprehensive guide to ELF binaries, creating shared libraries (.so), dynamic loading via dlopen, and LD_PRELOAD hooking.
+tags:
+  - ELF
+  - Linux
+  - MalwareDevelopment
+---
+
+# ELF Structure & Dynamic Linking
+
+The Executable and Linkable Format (ELF) is the standard binary format for executables, object code, and shared libraries in Unix-like systems. This guide covers the creation and dynamic loading of shared libraries (`.so`), which are the Linux equivalent to Windows DLLs.
+
+---
+
+## Shared Library Creation (`.so`)
+
+Below is an example of a Linux shared library written in C++. It uses `__attribute__((constructor))` to execute code upon load and `extern "C"` to export a callable function without C++ name mangling.
+
+<Tabs>
+  <Tab title="Library Code (C++)">
+    ```cpp
+    #include <stdio.h>
+
+    // Constructor: called automatically when the library is loaded
+    __attribute__((constructor)) void on_load() {
+        printf("Shared Library Loaded!\n");
+    }
+
+    // Destructor: called automatically when the library is unloaded
+    __attribute__((destructor)) void on_unload() {
+        printf("Shared Library Unloaded!\n");
+    }
+
+    // --------- Exported Function ---------
+    extern "C" {
+    void RunMe() {
+        printf("Exported function called! Hello from .so\n");
+    }
+    }
+    ```
+  </Tab>
+  <Tab title="GCC Compilation">
+    To build the Shared Library (`.so`), you must generate Position Independent Code (PIC).
+
+    ```bash
+    # Compile to object file first (with Position Independent Code)
+    g++ -c -fPIC implant.cpp -o implant.o
+
+    # Link into a Shared Library
+    g++ -shared -o libimplant.so implant.o
+    ```
+    Or in a single step:
+    ```bash
+    g++ -fPIC -shared -o libimplant.so implant.cpp
+    ```
+  </Tab>
+</Tabs>
+
+<Callout type="info" title="Key Concepts">
+* `__attribute__((constructor))` is equivalent to `DLL_PROCESS_ATTACH` in Windows.
+* `__attribute__((destructor))` is equivalent to `DLL_PROCESS_DETACH`.
+* `extern "C"` prevents C++ name mangling, allowing the function to be called by its plain name.
+* `-fPIC` (Position Independent Code) is mandatory for shared libraries in Linux.
+</Callout>
+
+---
+
+## Dynamic Loading (`dlopen`)
+
+To load a shared library at runtime, you use the `dlopen` API. The following C code demonstrates how to load the library and call its exported function.
+
+<Tabs>
+  <Tab title="Loader Code (C)">
+    ```c
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <dlfcn.h>
+
+    // Define the function pointer type
+    typedef void (*RunMe_t)(void);
+
+    int main()
+    {
+        // Load the shared library
+        void *handle = dlopen("./libimplant.so", RTLD_LAZY);
+        if (!handle) {
+            fprintf(stderr, "Failed to load library: %s\n", dlerror());
+            return 1;
+        }
+        
+        // Clear any existing errors
+        dlerror(); 
+        
+        // Get the address of the exported function
+        RunMe_t RunMe = (RunMe_t)dlsym(handle, "RunMe");
+        char *error = dlerror();
+        if (error != NULL) {
+            fprintf(stderr, "Failed to find RunMe: %s\n", error);
+            dlclose(handle);
+            return 1;
+        }
+        
+        // Call the function
+        RunMe();
+        
+        // Free the library
+        dlclose(handle);
+        return 0;
+    }
+    ```
+  </Tab>
+  <Tab title="Compilation">
+    You must link the `dl` library when compiling the loader.
+    ```bash
+    gcc loader.c -o loader -ldl
+    ```
+  </Tab>
+</Tabs>
+
+<Callout type="tip" title="Windows API Equivalents">
+* `dlopen("./libimplant.so", RTLD_LAZY)` is equivalent to `LoadLibraryA`.
+* `dlsym(handle, "RunMe")` is equivalent to `GetProcAddress`.
+* `dlclose(handle)` is equivalent to `FreeLibrary`.
+</Callout>
+
+---
+
+## `LD_PRELOAD` Injection
+
+While Linux lacks a direct `rundll32` equivalent for calling specific functions from the CLI, you can use the `LD_PRELOAD` environment variable to force a standard binary (like `ls` or `id`) to load your library. This will trigger its `constructor` function.
+
+```bash
+LD_PRELOAD=./libimplant.so ls
+```
+
+<Callout type="warning" title="Living Off The Land">
+`LD_PRELOAD` forces the OS to load your library into the memory space of the next executed command. This is highly useful for quick testing or hooking legitimate binaries.
+</Callout>
+
+---
+
+## ELF Binary Structure
+
+<Tabs>
+  <Tab title="ELF32 Structure">
+    ![ELF32 Structure](/docs/Asset/elf101.svg)
+  </Tab>
+  <Tab title="ELF64 Structure">
+    ![ELF64 Structure](/docs/Asset/64.svg)
+  </Tab>
+</Tabs>
