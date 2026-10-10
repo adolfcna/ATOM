@@ -1,11 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "ATTVDEF",
+  "theme": "maple",
+  "name": "ATTVSDEF",
   "colors": {
-    "primary": "#FF3B30",
-    "light": "#FF6B6B",
-    "dark": "#C1121F"
+    "primary": "#FF003C",
+    "light": "#FF4D6D",
+    "dark": "#CC0030"
   },
   "favicon": {
     "light": "/images/icon.png",
@@ -20,7 +20,9 @@
     "inheritance": "desktop"
   },
   "styling": {
-    "codeblocks": "dark"
+    "codeblocks": "dark",
+    "eyebrows": "section",
+    "latex": false
   },
   "interaction": {
     "drilldown": true
@@ -980,5 +982,15 @@
         ]
       }
     ]
-  }
+  },
+  "icons": {
+    "library": "lucide"
+  },
+  "background": {
+    "decoration": "windows"
+  },
+  "metadata": {
+    "timestamp": false
+  },
+  "description": "ATTvDEF is a comprehensive cybersecurity cheat sheet and study guide for security professionals. It focuses on malware behavior, attack and defense techniques, reverse engineering, and practical scenarios."
 }
