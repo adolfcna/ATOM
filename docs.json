@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "maple",
+  "theme": "mint",
   "name": "ATTVSDEF",
   "colors": {
     "primary": "#FF003C",
@@ -987,7 +987,7 @@
     "library": "lucide"
   },
   "background": {
-    "decoration": "windows"
+    "decoration": "gradient"
   },
   "metadata": {
     "timestamp": false
