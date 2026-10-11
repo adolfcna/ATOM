@@ -1,0 +1,113 @@
+---
+title: Network Sniffing & MITM Attacks
+description: Techniques for intercepting network traffic, poisoning ARP/DHCP tables, and detecting sniffers on the network.
+draft: false
+tags:
+  - MITM
+  - Sniffing
+  - Network
+---
+
+<Callout type="info" title="MITRE ATT&CK Mapping">
+* [T1557.002 - Adversary-in-the-Middle: ARP Cache Poisoning](https://attack.mitre.org/techniques/T1557/002/)
+* [T1040 - Network Sniffing](https://attack.mitre.org/techniques/T1040/)
+</Callout>
+
+!["gV"](/docs/Asset/gv.jpg)
+
+---
+
+## Vulnerable Protocols
+
+These protocols transmit data (including credentials) in cleartext. If you are in a Man-in-the-Middle position, you can easily capture this traffic.
+
+<CardGroup cols={3}>
+  <Card title="Email" icon="mail">IMAP, POP, SMTP</Card>
+  <Card title="Management" icon="settings">SNMP, NNTP</Card>
+  <Card title="Remote Access" icon="terminal">Telnet, Rlogin</Card>
+  <Card title="File Transfer" icon="folder">FTP</Card>
+  <Card title="Web" icon="globe">HTTP</Card>
+</CardGroup>
+
+---
+
+## Active Sniffing & Spoofing Attacks
+
+### ARP Poisoning (MITM)
+
+Redirect traffic between a victim and the gateway through the attacker's machine.
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#050505', 'primaryColor': '#1e1e2e', 'edgeLabelBackground':'#050505', 'primaryTextColor': '#cdd6f4', 'primaryBorderColor': '#FF003C', 'lineColor': '#FF003C', 'fontFamily': 'monospace'}}}%%
+flowchart LR
+    Victim["Victim Machine"] <-->|"1. Spoofed ARP (Attacker is Gateway)"| Attacker["Attacker (MITM)"]
+    Attacker <-->|"2. Spoofed ARP (Attacker is Victim)"| Gateway["Gateway / Router"]
+    
+    classDef default fill:#111118,stroke:#FF003C,stroke-width:1px,color:#ffffff;
+    classDef attacker fill:#2a0008,stroke:#FF003C,stroke-width:2px,color:#FF003C;
+    class Attacker attacker;
+```
+
+<Steps>
+  <Step title="Step 1: Enable IP Forwarding">
+    Prerequisites: Enable IP forwarding on the attacker's machine.
+    ```bash
+    sysctl -a | grep ipv4.ip_forward
+    sysctl -w net.ipv4.ip_forward=1
+    ```
+  </Step>
+  <Step title="Step 2: Execute ARP Spoofing">
+    <Tabs>
+      <Tab title="arpspoof">
+        ```bash
+        # Install dsniff suite
+        apt install dsniff
+        
+        # Run arpspoof (Bi-directional)
+        arpspoof -i wlp7s0 -t <target_ip> -r <gateway_ip>
+        ```
+      </Tab>
+      <Tab title="Habu (Alternative)">
+        ```bash
+        habu.arp.poison <victim_ip> <gateway_ip>
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+### MAC Flooding (Switch to Hub)
+
+Overwhelm a switch's CAM table with fake MAC addresses. The switch fails open and acts like a hub, broadcasting all traffic to all ports.
+
+```bash
+macof -i wlp7s0 -n 100
+```
+
+### DHCP Starvation & Rogue DHCP
+
+Exhaust the DHCP server's IP pool to prevent legitimate users from connecting, or to assign malicious gateway/DNS settings.
+
+```bash
+# Interactive mode for DHCP starvation
+yersinia -I
+```
+*Other tools: `dhcpig`, `dhcpiw` (for rogue DHCP)*
+
+### Other Active Sniffing Techniques
+
+<Callout type="warning">
+* **DNS Poisoning:** Tools include `Ettercap`, `Evilgrade`, `DNS-poison`, `DNS Spoof`.
+* **Switch Port Stealing**
+</Callout>
+
+---
+
+## Defensive Detection
+
+<Callout type="success" title="Detecting Promiscuous Mode (Sniffers)">
+If an interface is in promiscuous mode, it is likely sniffing traffic. Nmap can detect this remotely.
+```bash
+nmap --script sniffer-detect <IP>
+```
+</Callout>

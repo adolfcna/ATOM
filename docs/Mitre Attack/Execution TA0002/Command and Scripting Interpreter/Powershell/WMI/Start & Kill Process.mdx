@@ -1,0 +1,133 @@
+---
+title: Process Management
+description: Using WMI and CIM cmdlets to enumerate, create, and terminate processes locally or remotely without standard executables.
+draft: false
+tags:
+  - WMI
+  - CIM
+  - Process
+  - T1057
+  - T1106
+  - T1562
+---
+
+Using Windows Management Instrumentation (WMI) and Common Information Model (CIM) cmdlets to enumerate, create, and terminate processes locally or remotely. This is a stealthy way to interact with processes without using standard executables like `taskmgr.exe` or `taskkill.exe`.
+
+<Callout type="info" title="MITRE ATT&CK Mapping">
+* [T1057 - Process Discovery](https://attack.mitre.org/techniques/T1057/)
+* [T1106 - Native API](https://attack.mitre.org/techniques/T1106/)
+* [T1562 - Impair Defenses](https://attack.mitre.org/techniques/T1562/)
+</Callout>
+
+!["px"](/docs/Asset/px.jpg)
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e1e2e', 'edgeLabelBackground':'#1e1e2e', 'primaryTextColor': '#cdd6f4', 'primaryBorderColor': '#FF003C', 'lineColor': '#FF003C', 'fontFamily': 'monospace'}}}%%
+flowchart LR
+    A["Attacker (PowerShell)"] -->|"1. Invoke-WmiMethod (Create)"| B["WMI Service (WmiPrvSE.exe)"]
+    B -->|"2. DCOM / RPC (Port 135)"| C["Target Machine"]
+    C -->|"3. Spawns Process"| D["calc.exe / payload.exe"]
+    
+    classDef default fill:#111118,stroke:#FF003C,stroke-width:1px,color:#ffffff;
+    classDef attacker fill:#2a0008,stroke:#FF003C,stroke-width:2px,color:#FF003C;
+    class A attacker;
+```
+
+---
+
+## 1. Process Enumeration
+
+Retrieve details about running processes using WMI (`gwmi`) and CIM (`gcim`).
+
+<Tabs>
+  <Tab title="Using WMI (gwmi)">
+    ```powershell
+    # Filter by process name
+    gwmi -Class win32_process -Filter { Name = "calc.exe" }
+
+    # Using Where-Object
+    gwmi -Class win32_process | ? {$_.Name -eq "calc.exe"}
+    ```
+  </Tab>
+  <Tab title="Using CIM (gcim)">
+    ```powershell
+    # Filter by process name (note the single quotes for CIM filter)
+    gcim -ClassName win32_process -Filter 'Name = "powershell.exe"'
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## 2. Process Creation
+
+<Callout type="danger" title="Spawning New Processes">
+WMI can be used to spawn new processes remotely or locally. This method is often used by attackers for lateral movement because it relies on DCOM/RPC rather than SMB or WinRM.
+</Callout>
+
+<Steps>
+  <Step title="Step 1: Exploring the `Create` Method">
+    ```powershell
+    # View the Create method details
+    get-cimclass -MethodName Create
+
+    # View parameters required for the Create method
+    Get-CimClass -className win32_process | select -ExpandProperty cimclassmethods | ? {$_.Name -eq "Create"} | select -ExpandProperty parameters
+    ```
+  </Step>
+  <Step title="Step 2: Executing the `Create` Method">
+    <Tabs>
+      <Tab title="Array Argument">
+        ```powershell
+        invoke-wmimethod -Class win32_process -Name Create -ArgumentList @(calc.exe)
+        ```
+      </Tab>
+      <Tab title="String Argument">
+        ```powershell
+        invoke-wmimethod -Class win32_process -Name Create -ArgumentList calc.exe
+        ```
+      </Tab>
+      <Tab title="Hashtable Argument">
+        ```powershell
+        invoke-wmimethod -Class win32_process -Name Create -ArgumentList @{commandline = "calc.exe"}
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+---
+
+## 3. Process Termination
+
+Terminate running processes by piping the WMI/CIM object to the appropriate removal cmdlet.
+
+<Tabs>
+  <Tab title="Using WMI (gwmi)">
+    ```powershell
+    # Using Remove-WmiObject
+    gwmi -Class win32_process -Filter { Name = "calc.exe" } | remove-wmiobject
+
+    # Using the alias 'rwmi'
+    gwmi -Class win32_process -Filter { Name = "calc.exe" } | rwmi
+    ```
+  </Tab>
+  <Tab title="Using CIM (gcim)">
+    ```powershell
+    # Using Remove-CimInstance
+    gcim -ClassName win32_process -Filter 'Name = "powershell.exe"' | remove-ciminstance
+
+    # Using the alias 'rcim'
+    gcim -ClassName win32_process -Filter 'Name = "powershell.exe"' | rcim
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## OPSEC & Lateral Movement
+
+<Callout type="warning" title="Operational Security (OPSEC)">
+* `Invoke-WmiMethod` is highly favored for lateral movement because it operates over DCOM (TCP port 135 + dynamic high ports). If SMB (445) or WinRM (5985) is blocked by the firewall but DCOM is open, WMI process creation will still work.
+* Process creation via WMI generates **Event ID 4624 (Type 3 - Network Logon)** and **Event ID 4688 (New Process Created)**. If the process is spawned remotely, the caller will be the remote user account.
+</Callout>

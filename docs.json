@@ -314,7 +314,7 @@
             "group": "Discovery TA0007",
             "pages": [
               "docs/Mitre Attack/Discovery TA0007/Domain Enumeration (Powerview)",
-              "docs/Mitre Attack/Discovery TA0007/Stealth Discovery"
+              "docs/Mitre Attack/Discovery TA0007/Domain Discovery (WMI & CIM)"
             ],
             "expanded": false
           },

@@ -1,0 +1,149 @@
+---
+title: WMI & CIM Basics Namespaces & Classes
+description: Windows Management Instrumentation (WMI) and Common Information Model (CIM) are core management technologies in Windows. Understanding how to navigate WMI Namespaces and Classes using PowerShell is essential for stealthy enumeration, execution, and lateral movement without relying on standard system binaries.
+draft: false
+tags:
+  - WMI
+  - CIM
+  - T1047
+  - T1082
+  - T1057
+---
+
+<Callout type="info" title="MITRE ATT&CK Mapping">
+* [T1047 - Windows Management Instrumentation](https://attack.mitre.org/techniques/T1047/)
+* [T1082 - System Information Discovery](https://attack.mitre.org/techniques/T1082/)
+* [T1057 - Process Discovery](https://attack.mitre.org/techniques/T1057/)
+</Callout>
+
+!["hkul"](/docs/Asset/hkul.jpg)
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#050505', 'primaryColor': '#1e1e2e', 'edgeLabelBackground':'#050505', 'primaryTextColor': '#cdd6f4', 'primaryBorderColor': '#FF003C', 'lineColor': '#FF003C', 'fontFamily': 'monospace'}}}%%
+flowchart TD
+    Root["root (Namespace)"] --> cimv2["cimv2 (Namespace)"]
+    cimv2 --> Win32_BIOS["Win32_BIOS (Class)"]
+    cimv2 --> Win32_Process["Win32_Process (Class)"]
+    Win32_Process --> Inst1["Instance: powershell.exe (PID 1234)"]
+    Win32_Process --> Inst2["Instance: lsass.exe (PID 5678)"]
+    
+    classDef default fill:#111118,stroke:#FF003C,stroke-width:1px,color:#ffffff;
+    classDef ns fill:#1a1a1a,stroke:#585b70,stroke-width:2px,color:#cdd6f4;
+    classDef class fill:#2a0008,stroke:#FF003C,stroke-width:2px,color:#FF003C;
+    class Root,cimv2 ns;
+    class Win32_BIOS,Win32_Process class;
+```
+
+---
+
+## 1. Finding Help & Commands
+
+<Callout type="info" title="Discovering WMI/CIM Cmdlets">
+Use `Get-Command` (`gcm`) to list all available PowerShell cmdlets related to WMI and CIM.
+```powershell
+gcm *wmi*
+gcm *cim*
+```
+</Callout>
+
+---
+
+## 2. Enumerating Namespaces
+
+WMI is organized hierarchically into namespaces (like folders). The root namespace is `root`. You can enumerate all sub-namespaces by querying the `__namespace` system class.
+
+<Tabs>
+  <Tab title="Using WMI (gwmi)">
+    ```powershell
+    get-wmiobject -Namespace "root" -Class "__namespace" | select Name
+    gwmi -Namespace "root" -Class "__namespace" | select Name
+    ```
+  </Tab>
+  <Tab title="Using CIM (gcim)">
+    ```powershell
+    get-ciminstance -Namespace "root" -Class "__namespace" | select Name
+    gcim -Namespace "root" -Class "__namespace" | select Name
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## 3. Enumerating Classes
+
+Once you know the namespace, you can list all classes inside it or search for specific classes using wildcards.
+
+<Tabs>
+  <Tab title="List All Classes">
+    ```powershell
+    # List classes in the 'default' namespace
+    gwmi -namespace root\default -Class * -List
+
+    # List classes in the 'cimv2' namespace
+    gwmi -namespace root\cimv2 -Class * -List
+    ```
+  </Tab>
+  <Tab title="Search Specific Classes">
+    ```powershell
+    # Search for classes containing 'bios' in root\cimv2
+    gwmi -namespace root\cimv2 -Class *bios* -List
+
+    # Using CIM
+    get-cimclass -ClassName *bios*
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## 4. Querying Class Instances
+
+Once you find the class you need, you can query its instances (the actual data).
+
+<Tabs>
+  <Tab title="Example 1: BIOS Information">
+    ```powershell
+    gwmi -Class *bios* -List 
+    gwmi -Class win32_bios -List
+    gwmi -Class win32_bios
+
+    # Using CIM
+    gcim -ClassName win32_bios
+    ```
+  </Tab>
+  <Tab title="Example 2: Process Enumeration">
+    ```powershell
+    gwmi -Class *process* -List
+    gwmi -Class win32_process
+    ```
+    *Filtering processes to find a specific executable (e.g., `powershell.exe`).*
+
+    <Tabs>
+      <Tab title="Method 1: WQL Curly Braces">
+        *WMI native*
+        ```powershell
+        gwmi -class win32_process -Filter { name = "powershell.exe"}
+        ```
+      </Tab>
+      <Tab title="Method 2: WQL Single Quotes">
+        *Standard string*
+        ```powershell
+        gwmi -class win32_process -Filter 'name = "powershell.exe"'
+        ```
+      </Tab>
+      <Tab title="Method 3: Where-Object Pipeline">
+        ```powershell
+        gwmi -class win32_process | ? {$_.Name -eq "powershell.exe"}
+        ```
+      </Tab>
+    </Tabs>
+  </Tab>
+</Tabs>
+
+---
+
+<Callout type="warning" title="Important Note: The Default Namespace">
+You might have noticed that we didn't specify the `-Namespace` parameter in the queries above (like `win32_bios` or `win32_process`). 
+
+This is because `root\cimv2` **is the default WMI namespace** in Windows. If you don't explicitly provide a namespace, PowerShell automatically queries `root\cimv2`, which contains most of the useful operating system and hardware information.
+</Callout>
