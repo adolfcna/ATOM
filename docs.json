@@ -920,7 +920,8 @@
               {
                 "group": "Indicator Removal",
                 "pages": [
-                  "docs/Mitre Attack/Stealth TA0005/Indicator Removal/Indicator Removal"
+                  "docs/Mitre Attack/Stealth TA0005/Indicator Removal/Indicator Removal",
+		  "docs/Mitre Attack/Stealth TA0005/Indicator Removal/TimeStomp"
                 ],
                 "expanded": false
               },
