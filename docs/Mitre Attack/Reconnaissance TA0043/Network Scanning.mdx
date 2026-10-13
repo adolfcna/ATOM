@@ -1,0 +1,83 @@
+---
+title: Host Discovery & Metasploit Integration
+description: Identifying live hosts on a local network and integrating Nmap scan results into the Metasploit database.
+draft: false
+tags:
+  - Reconnaissance
+  - Nmap
+  - Metasploit
+  - Scanning
+---
+
+<Callout type="info" title="Concept Overview">
+Techniques for identifying live hosts on a local subnet and seamlessly integrating Nmap scan results into the Metasploit Framework database for streamlined exploitation.
+</Callout>
+
+!["rely.jp"](/docs/Asset/rely.jpg)
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#050505', 'primaryColor': '#111118', 'edgeLabelBackground':'#050505', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#FF003C', 'lineColor': '#FF003C', 'fontFamily': 'monospace' }}}%%
+flowchart LR
+    A["Local Subnet"] --> B["Host Discovery (ARP/ICMP)"]
+    B --> C["Nmap XML Output"]
+    C --> D["MSF Database Import"]
+    D --> E["Hosts & Services Enumerated"]
+    
+    classDef default fill:#111118,stroke:#585b70,stroke-width:1px,color:#ffffff;
+    classDef attacker fill:#2a0008,stroke:#FF003C,stroke-width:2px,color:#FF003C;
+    classDef action fill:#1a1a1a,stroke:#89b4fa,stroke-width:2px,color:#89b4fa;
+    classDef exec fill:#1a1a1a,stroke:#D500F9,stroke-width:2px,color:#D500F9;
+
+    class A,B action;
+    class C,D attacker;
+    class E exec;
+```
+
+---
+
+## Local Network Host Discovery
+
+<Callout type="info" title="Identify Live Hosts">
+Identify live hosts on a local subnet before running deep port scans.
+</Callout>
+
+```bash
+# ARP/ICMP discovery
+nmap -sn 192.168.10.0/24
+netdiscover -i wlan0 -r 192.168.10.0/24
+arp-scan -I wlan0 -g 192.168.10.0/24
+fping -I wlan0 -ga 192.168.10.0/24 2>/dev/null
+```
+
+---
+
+## Nmap Output & Metasploit Database Integration
+
+<Callout type="tip" title="Database Integration">
+Scan a target, save the output in XML format, and import it into Metasploit to manage hosts and services seamlessly.
+</Callout>
+
+<Steps>
+  <Step title="Step 1: Run Nmap and Save to XML">
+    ```bash
+    # Run Nmap and save to XML
+    nmap -Pn -sV -O 94.182.182.2 -oX file.xml
+    ```
+  </Step>
+
+  <Step title="Step 2: Import into Metasploit">
+    ```bash
+    # Import into Metasploit
+    msfconsole -q
+    msf5> workspace -a windowsServer2009
+    msf5> db_import file.xml
+    ```
+  </Step>
+
+  <Step title="Step 3: View Imported Data">
+    ```ruby
+    msf5> services
+    msf5> hosts
+    ```
+  </Step>
+</Steps>

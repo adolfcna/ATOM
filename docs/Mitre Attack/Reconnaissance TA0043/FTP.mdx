@@ -1,0 +1,114 @@
+---
+title: FTP Enumeration & Brute Force
+description: A quick guide for enumerating FTP services, checking anonymous access, brute-forcing credentials, and interacting with the FTP server.
+draft: false
+tags:
+  - FTP
+  - Reconnaissance
+  - BruteForce
+  - T1110
+---
+
+<Callout type="info" title="Concept Overview">
+A quick guide for enumerating FTP services (port 21), checking for anonymous access, brute-forcing credentials, and interacting with the FTP server.
+</Callout>
+
+["23"](/docs/Asset/vb.jpg)
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#050505', 'primaryColor': '#111118', 'edgeLabelBackground':'#050505', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#FF003C', 'lineColor': '#FF003C', 'fontFamily': 'monospace' }}}%%
+flowchart TD
+    A["Reconnaissance (Nmap/NC)"] --> B["Banner Grabbing"]
+    B --> C{"Anonymous Login?"}
+    C -- Yes --> D["Interact & Exploit"]
+    C -- No --> E["Brute Force (Hydra/MSF)"]
+    E --> F["Valid Credentials"]
+    F --> D
+    
+    classDef default fill:#111118,stroke:#585b70,stroke-width:1px,color:#ffffff;
+    classDef attacker fill:#2a0008,stroke:#FF003C,stroke-width:2px,color:#FF003C;
+    classDef action fill:#1a1a1a,stroke:#89b4fa,stroke-width:2px,color:#89b4fa;
+    classDef exec fill:#1a1a1a,stroke:#D500F9,stroke-width:2px,color:#D500F9;
+
+    class A,B action;
+    class C action;
+    class E,F attacker;
+    class D exec;
+```
+
+---
+
+## Reconnaissance & Banner Grabbing
+
+Scan for FTP scripts and grab the service banner to identify the version and potential vulnerabilities.
+
+<Tabs>
+  <Tab title="Nmap">
+    ```bash
+    # Run all FTP nmap scripts including anonymous check
+    nmap --script ftp* ftp-anon -p 21 $ip
+    ```
+  </Tab>
+  <Tab title="Netcat">
+    ```bash
+    # Banner grabbing with Netcat
+    nc -vv 172.20.10.1 21
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Brute Forcing
+
+<Callout type="danger" title="Credential Brute Force (MITRE ATT&CK T1110)">
+Attempting to guess FTP credentials using wordlists. 
+**Reference:** [MITRE ATT&CK T1110](https://attack.mitre.org/techniques/T1110/)
+</Callout>
+
+<Tabs>
+  <Tab title="Hydra">
+    ```bash
+    hydra -t 4 -L /usr/share/metasploit/wordlists/data/unix_user.txt -P /usr/share/wordlists/nmap.lst $ip ftp
+    ```
+    *Note: Common password lists include `/usr/share/wordlists/nmap.lst` or `/usr/share/john/password.lst`.*
+  </Tab>
+  <Tab title="Metasploit Framework (MSFconsole)">
+    ```ruby
+    msfconsole -q
+    search scanner ftp_login
+    use auxiliary/scanner/ftp/ftp_login
+    show options
+    # set RHOSTS, USER_FILE, and PASS_FILE
+    exploit
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## FTP Interaction & Commands
+
+Connect to the target FTP server. Try `anonymous` as both username and password if anonymous login is allowed.
+
+```bash
+ftp x.x.x.x
+# Username: anonymous
+# Password: (anything or anonymous)
+```
+
+<AccordionGroup>
+  <Accordion title="Useful FTP Commands">
+    ```bash
+    ls              # List files
+    get             # Get a single file from the remote computer
+    mget *          # Get multiple files (downloads everything)
+    put             # Send a single file
+    mput            # Send multiple files
+    send            # Send a single file (alias for put)
+    binary          # Switches to binary transfer mode (for files/executables)
+    ascii           # Switch to ASCII transfer mode (for text files)
+    bye             # Exit FTP session
+    ```
+  </Accordion>
+</AccordionGroup>

