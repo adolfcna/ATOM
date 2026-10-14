@@ -539,7 +539,6 @@
                         "group": "XSS",
                         "pages": [
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS/CSP",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS/Payloads",
                           "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS/XSS"
                         ],
                         "expanded": false
