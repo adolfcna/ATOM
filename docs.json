@@ -220,18 +220,18 @@
             "group": "Tools",
             "expanded": false,
             "pages": [
-              "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Exploit/Tools/pwn",
-              "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Exploit/Tools/rizin"
+              "docs/Exploit Development/Tools/pwn",
+              "docs/Exploit Development/Tools/rizin"
             ]
           },
-          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Exploit/BOF",
-          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Exploit/BUG",
-          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Exploit/Format Strings",
+          "docs/Exploit Development/BOF",
+          "docs/Exploit Development/BUG",
+          "docs/Exploit Development/Format Strings",
           {
             "group": "ShellCode",
             "expanded": false,
             "pages": [
-              "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Exploit/ShellCode/Windows x64 Assembly"
+              "docs/Exploit Development/ShellCode/Windows x64 Assembly"
             ]
           }
         ]
@@ -257,31 +257,31 @@
                 "group": "Combine Method",
                 "expanded": false,
                 "pages": [
-                  "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Combine Method/DAR&AES",
-                  "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Combine Method/DAR&XOR"
+                  "docs/Malware Analysis/Malware/Combine Method/DAR&AES",
+                  "docs/Malware Analysis/Malware/Combine Method/DAR&XOR"
                 ]
               },
               {
                 "group": "Credential Dumping",
                 "expanded": false,
                 "pages": [
-                  "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Credential Dumping/Dumping Lsass without Mimikatz"
+                  "docs/Malware Analysis/Malware/Credential Dumping/Dumping Lsass without Mimikatz"
                 ]
               },
               {
                 "group": "Hooking",
                 "expanded": false,
                 "pages": [
-                  "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Hooking/Detours Hooking",
-                  "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Hooking/IAT Hooking",
-                  "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Hooking/In-line Patching"
+                  "docs/Malware Analysis/Malware/Hooking/Detours Hooking",
+                  "docs/Malware Analysis/Malware/Hooking/IAT Hooking",
+                  "docs/Malware Analysis/Malware/Hooking/In-line Patching"
                 ]
               },
               {
                 "group": "Native",
                 "expanded": false,
                 "pages": [
-                  "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Native/Basic"
+                  "docs/Malware Analysis/Malware/Native/Basic"
                 ]
               },
               {
@@ -292,29 +292,29 @@
                     "group": "Code Cave Injection",
                     "expanded": false,
                     "pages": [
-                      "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Code Cave Injection/Code Cave injection Method"
+                      "docs/Malware Analysis/Malware/Process Injection/Code Cave Injection/Code Cave injection Method"
                     ]
                   },
                   {
                     "group": "DLL Injection",
                     "expanded": false,
                     "pages": [
-                      "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/DLL Injection/DLL Injection"
+                      "docs/Malware Analysis/Malware/Process Injection/DLL Injection/DLL Injection"
                     ]
                   },
                   {
                     "group": "Process Hollowing",
                     "expanded": false,
                     "pages": [
-                      "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Process Hollowing/Load Mimikatz"
+                      "docs/Malware Analysis/Malware/Process Injection/Process Hollowing/Load Mimikatz"
                     ]
                   },
                   {
                     "group": "Reflective DLL Loader",
                     "expanded": false,
                     "pages": [
-                      "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Reflective DLL Loader/Reflective DLL Loading",
-                      "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Reflective DLL Loader/sRDI"
+                      "docs/Malware Analysis/Malware/Process Injection/Reflective DLL Loader/Reflective DLL Loading",
+                      "docs/Malware Analysis/Malware/Process Injection/Reflective DLL Loader/sRDI"
                     ]
                   },
                   {
@@ -325,51 +325,51 @@
                         "group": "APC Shellcode Injection",
                         "expanded": false,
                         "pages": [
-                          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/APC Shellcode Injection/APC Injection",
-                          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/APC Shellcode Injection/EarlyBird"
+                          "docs/Malware Analysis/Malware/Process Injection/Shellcode Injection/APC Shellcode Injection/APC Injection",
+                          "docs/Malware Analysis/Malware/Process Injection/Shellcode Injection/APC Shellcode Injection/EarlyBird"
                         ]
                       },
                       {
                         "group": "Different Section Injection",
                         "expanded": false,
                         "pages": [
-                          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Different Section Injection/Shellcode Injection"
+                          "docs/Malware Analysis/Malware/Process Injection/Shellcode Injection/Different Section Injection/Shellcode Injection"
                         ]
                       },
                       {
                         "group": "Encryption",
                         "expanded": false,
                         "pages": [
-                          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Encryption/AES",
-                          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Encryption/XOR"
+                          "docs/Malware Analysis/Malware/Process Injection/Shellcode Injection/Encryption/AES",
+                          "docs/Malware Analysis/Malware/Process Injection/Shellcode Injection/Encryption/XOR"
                         ]
                       },
                       {
                         "group": "Heaven's Gate",
                         "expanded": false,
                         "pages": [
-                          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Heaven's Gate/Heaven's Gate"
+                          "docs/Malware Analysis/Malware/Process Injection/Shellcode Injection/Heaven's Gate/Heaven's Gate"
                         ]
                       },
                       {
                         "group": "IPC Shellcode Injection",
                         "expanded": false,
                         "pages": [
-                          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/IPC Shellcode Injection/NT Section Mapping Injection"
+                          "docs/Malware Analysis/Malware/Process Injection/Shellcode Injection/IPC Shellcode Injection/NT Section Mapping Injection"
                         ]
                       },
                       {
                         "group": "Native API",
                         "expanded": false,
                         "pages": [
-                          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Native API/Native Classic Injection"
+                          "docs/Malware Analysis/Malware/Process Injection/Shellcode Injection/Native API/Native Classic Injection"
                         ]
                       },
                       {
                         "group": "Thread Context Hijacking",
                         "expanded": false,
                         "pages": [
-                          "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/Process Injection/Shellcode Injection/Thread Context Hijacking/Context Injection With AES Encryption"
+                          "docs/Malware Analysis/Malware/Process Injection/Shellcode Injection/Thread Context Hijacking/Context Injection With AES Encryption"
                         ]
                       }
                     ]
@@ -384,28 +384,28 @@
                     "group": "Different Section Injection",
                     "expanded": false,
                     "pages": [
-                      "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/ShellCode Execution/Different Section Injection/Shellcode Injection"
+                      "docs/Malware Analysis/Malware/ShellCode Execution/Different Section Injection/Shellcode Injection"
                     ]
                   },
                   {
                     "group": "Encode",
                     "expanded": false,
                     "pages": [
-                      "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/ShellCode Execution/Encode/Base64"
+                      "docs/Malware Analysis/Malware/ShellCode Execution/Encode/Base64"
                     ]
                   },
                   {
                     "group": "Encryption",
                     "expanded": false,
                     "pages": [
-                      "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/ShellCode Execution/Encryption/AES",
-                      "docs/Mitre Attack/Resource Development TA0042/Develop Capabilities T1587/Malware/ShellCode Execution/Encryption/XOR"
+                      "docs/Malware Analysis/Malware/ShellCode Execution/Encryption/AES",
+                      "docs/Malware Analysis/Malware/ShellCode Execution/Encryption/XOR"
                     ]
                   }
                 ]
               },
               {
-                "group": "Stealth TA0005",
+                "group": "Stealth T0005",
                 "pages": [
                   {
                     "group": "Rootkit",
@@ -415,9 +415,9 @@
                         "group": "Direct Kernel Object Manipulation",
                         "expanded": false,
                         "pages": [
-                          "docs/Mitre Attack/Stealth TA0005/Rootkit/Direct Kernel Object Manipulation/Bypassing PPL",
-                          "docs/Mitre Attack/Stealth TA0005/Rootkit/Direct Kernel Object Manipulation/Hide Driver",
-                          "docs/Mitre Attack/Stealth TA0005/Rootkit/Direct Kernel Object Manipulation/Hide Process"
+                          "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/Direct Kernel Object Manipulation/Bypassing PPL",
+                          "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/Direct Kernel Object Manipulation/Hide Driver",
+                          "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/Direct Kernel Object Manipulation/Hide Process"
                         ]
                       }
                     ]
@@ -425,7 +425,7 @@
                   {
                     "group": "Indicator Removal",
                     "pages": [
-                      "docs/Mitre Attack/Stealth TA0005/Indicator Removal/TimeStomp-2"
+                      "docs/Malware Analysis/Malware/Stealth T0005/Indicator Removal/TimeStomp"
                     ]
                   }
                 ]
@@ -934,7 +934,7 @@
                 "group": "Indicator Removal",
                 "pages": [
                   "docs/Mitre Attack/Stealth TA0005/Indicator Removal/Indicator Removal",
-		  "docs/Mitre Attack/Stealth TA0005/Indicator Removal/TimeStomp"
+                  "docs/Mitre Attack/Stealth TA0005/Indicator Removal/TimeStomp"
                 ],
                 "expanded": false
               },
