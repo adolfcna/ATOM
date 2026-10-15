@@ -406,6 +406,7 @@
               },
               {
                 "group": "Stealth T0005",
+                "expanded": false,
                 "pages": [
                   {
                     "group": "Rootkit",
@@ -419,6 +420,13 @@
                           "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/Direct Kernel Object Manipulation/Hide Driver",
                           "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/Direct Kernel Object Manipulation/Hide Process"
                         ]
+                      },
+                      {
+                        "group": "BYOVD",
+                        "expanded": false,
+                        "pages": [
+                          "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/BYOVD/HVCI"
+                        ]
                       }
                     ]
                   },
@@ -426,6 +434,13 @@
                     "group": "Indicator Removal",
                     "pages": [
                       "docs/Malware Analysis/Malware/Stealth T0005/Indicator Removal/TimeStomp"
+                    ]
+                  },
+                  {
+                    "group": "Hide Artifacts",
+                    "expanded": false,
+                    "pages": [
+                      "docs/Malware Analysis/Malware/Stealth T0005/Hide Artifacts/NTFS File Attributes"
                     ]
                   }
                 ]
