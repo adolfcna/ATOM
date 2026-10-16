@@ -157,9 +157,10 @@
                 "expanded": false
               },
               {
-                "group": "Process & Thread",
+                "group": "Process & Thread & Handle",
                 "pages": [
-                  "docs/Internals/Microsoft Windows/Process & Thread/Thread"
+                  "docs/Internals/Microsoft Windows/Process & Thread & Handle/Thread",
+                  "docs/Internals/Microsoft Windows/Process & Thread & Handle/Handle"
                 ],
                 "expanded": false
               },
@@ -282,6 +283,44 @@
                 "expanded": false,
                 "pages": [
                   "docs/Malware Analysis/Malware/Native/Basic"
+                ]
+              },
+              {
+                "group": "Persistence TA0003",
+                "expanded": false,
+                "pages": [
+                  {
+                    "group": "Boot or Logon Autostart Execution",
+                    "expanded": false,
+                    "pages": [
+                      "docs/Malware Analysis/Malware/Persistence TA0003/Boot or Logon Autostart Execution/Registry Run Keys - Startup Folder"
+                    ]
+                  },{
+                    "group": "Create or Modify System Process",
+                    "expanded": false,
+                    "pages": [
+                      "docs/Malware Analysis/Malware/Persistence TA0003/Create or Modify System Process/Windows Service"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Privilege Escalation TA0004",
+                "expanded": false,
+                "pages": [
+                  {
+                    "group": "Access Token Manipulation",
+                    "expanded": false,
+                    "pages": [
+                      {
+                        "group": "Token Impersonation Theft",
+                        "expanded": false,
+                        "pages": [
+                          "docs/Malware Analysis/Malware/Privilege Escalation TA0004/Access Token Manipulation/Token Impersonation Theft/Token Impersonation"
+                        ]
+                      }
+                    ]
+                  }
                 ]
               },
               {
@@ -837,20 +876,6 @@
                 "expanded": false
               },
               {
-                "group": "Boot or Logon Autostart Execution",
-                "pages": [
-                  "docs/Mitre Attack/Persistence TA0003/Boot or Logon Autostart Execution/Registry Run Keys - Startup Folder"
-                ],
-                "expanded": false
-              },
-              {
-                "group": "Create or Modify System Process",
-                "pages": [
-                  "docs/Mitre Attack/Persistence TA0003/Create or Modify System Process/Windows Service"
-                ],
-                "expanded": false
-              },
-              {
                 "group": "Modify Authentication Process",
                 "pages": [
                   "docs/Mitre Attack/Persistence TA0003/Modify Authentication Process/Security Support Provider",
@@ -875,15 +900,6 @@
               {
                 "group": "Access Token Manipulation",
                 "pages": [
-                  {
-                    "group": "Token Impersonation Theft",
-                    "pages": [
-                      "docs/Mitre Attack/Privilege Escalation TA0004/Access Token Manipulation/Token Impersonation Theft/Dance With Token",
-                      "docs/Mitre Attack/Privilege Escalation TA0004/Access Token Manipulation/Token Impersonation Theft/Kernel-Level Token Stealing",
-                      "docs/Mitre Attack/Privilege Escalation TA0004/Access Token Manipulation/Token Impersonation Theft/Token Impersonation"
-                    ],
-                    "expanded": false
-                  }
                 ],
                 "expanded": false
               },
