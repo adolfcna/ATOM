@@ -1,6 +1,3 @@
-حق داری، ساده‌ش کردم. این رو کپی کن:
-
-```markdown
 # ⚔️ Attacker vs Defender
 
 > A deep-dive hub covering the eternal arms race between Windows kernel
@@ -76,4 +73,3 @@ MIT — see [LICENSE](./LICENSE).
 ⭐ Star · 🐛 Issue · 🍴 Fork
 
 </div>
-```
