@@ -263,6 +263,22 @@
                 ]
               },
               {
+                "group": "Discovery TA0007",
+                "expanded": false,
+                "pages": [
+                  {
+                    "group": "Process Discovery",
+                    "expanded": false,
+                    "pages": [
+                      "docs/Malware Analysis/Malware/Discovery TA0007/Process Discovery/CreateToolHelpSnapShoot",
+                      "docs/Malware Analysis/Malware/Discovery TA0007/Process Discovery/Native API",
+                      "docs/Malware Analysis/Malware/Discovery TA0007/Process Discovery/WTSEnumerateProcesses",
+                      "docs/Malware Analysis/Malware/Discovery TA0007/Process Discovery/Enumprocess"
+                    ]
+                  }
+                ]
+              },
+              {
                 "group": "Credential Dumping",
                 "expanded": false,
                 "pages": [
