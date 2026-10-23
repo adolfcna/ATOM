@@ -273,7 +273,9 @@
                       "docs/Malware Analysis/Malware/Discovery TA0007/Process Discovery/CreateToolHelpSnapShoot",
                       "docs/Malware Analysis/Malware/Discovery TA0007/Process Discovery/Native API",
                       "docs/Malware Analysis/Malware/Discovery TA0007/Process Discovery/WTSEnumerateProcesses",
-                      "docs/Malware Analysis/Malware/Discovery TA0007/Process Discovery/Enumprocess"
+                      "docs/Malware Analysis/Malware/Discovery TA0007/Process Discovery/Enumprocess",
+                      "docs/Malware Analysis/Malware/Discovery TA0007/Process Discovery/Handle Discovery",
+                      "docs/Malware Analysis/Malware/Discovery TA0007/Process Discovery/Process Monitoring"
                     ]
                   }
                 ]
