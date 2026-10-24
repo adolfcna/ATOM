@@ -323,7 +323,8 @@
                      "group": "Event Triggered Execution",
                      "expanded": false,
                      "pages": [
-                       "docs/Malware Analysis/Malware/Persistence TA0003/Event Triggered Execution/AppInit DLLs"
+                       "docs/Malware Analysis/Malware/Persistence TA0003/Event Triggered Execution/AppInit DLLs",
+                       "docs/Malware Analysis/Malware/Persistence TA0003/Event Triggered Execution/Global HooK"
                      ]
                   }
                 ]
