@@ -319,6 +319,12 @@
                     "pages": [
                       "docs/Malware Analysis/Malware/Persistence TA0003/Create or Modify System Process/Windows Service"
                     ]
+                  },{
+                     "group": "Event Triggered Execution",
+                     "expanded": false,
+                     "pages": [
+                       "docs/Malware Analysis/Malware/Persistence TA0003/Event Triggered Execution/AppInit DLLs"
+                     ]
                   }
                 ]
               },
