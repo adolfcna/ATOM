@@ -716,11 +716,9 @@
                         "expanded": false
                       },
                       {
-                        "group": "CSRF & CORS",
+                        "group": "Security Misconfiguration",
                         "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/CSRF & CORS/CORS Misconfiguration",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/CSRF & CORS/CSRF",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/CSRF & CORS/SOP vs CORS"
+                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Security Misconfiguration/CORS Misconfiguration"
                         ],
                         "expanded": false
                       },
@@ -822,10 +820,11 @@
                         "expanded": false
                       },
                       {
-                        "group": "XSS",
+                        "group": "XSS & CSRF",
                         "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS/CSP",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS/XSS"
+                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS & CSRF/CSP",
+                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS & CSRF/XSS",
+                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS & CSRF/CSRF"
                         ],
                         "expanded": false
                       },
