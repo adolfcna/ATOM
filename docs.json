@@ -477,19 +477,32 @@
                     "expanded": false,
                     "pages": [
                       {
-                        "group": "Direct Kernel Object Manipulation",
+                        "group": "KernelLand",
                         "expanded": false,
                         "pages": [
-                          "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/Direct Kernel Object Manipulation/Bypassing PPL",
-                          "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/Direct Kernel Object Manipulation/Hide Driver",
-                          "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/Direct Kernel Object Manipulation/Hide Process"
+                          {
+                            "group": "Direct Kernel Object Manipulation",
+                            "expanded": false,
+                            "pages": [
+                              "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/KernelLand/Direct Kernel Object Manipulation/Bypassing PPL",
+                              "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/KernelLand/Direct Kernel Object Manipulation/Hide Driver",
+                              "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/KernelLand/Direct Kernel Object Manipulation/Hide Process"
+                            ]
+                          },
+                          {
+                            "group": "BYOVD",
+                            "expanded": false,
+                            "pages":[
+                              "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/KernelLand/BYOVD/HVCI"
+                            ]
+                          }
                         ]
                       },
                       {
-                        "group": "BYOVD",
+                        "group": "UserLand",
                         "expanded": false,
                         "pages": [
-                          "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/BYOVD/HVCI"
+                          "docs/Malware Analysis/Malware/Stealth T0005/Rootkit/UserLand/Hide Process"
                         ]
                       }
                     ]
@@ -669,191 +682,6 @@
             "expanded": false
           },
           {
-            "group": "Initial Access TA0001",
-            "pages": [
-              {
-                "group": "Exploit Public-Facing Application T1190",
-                "pages": [
-                  {
-                    "group": "OWASP",
-                    "pages": [
-                      {
-                        "group": "API Abuse",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/API Abuse/API Abuse",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/API Abuse/BFLA",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/API Abuse/BOLA",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/API Abuse/DOM vs BOM",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/API Abuse/Excessive Data Exposure",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/API Abuse/IDOR",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/API Abuse/Mass Assignment"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "BruteForce",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/BruteForce/BruteForce",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/BruteForce/OpenSSL",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/BruteForce/Weak CAPTCHA Bypass"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "Code Injection",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Code Injection/RCE (Remote Code Execution)",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Code Injection/SSTI",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Code Injection/Tools"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "Command Injection",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Command Injection/Ci"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "Security Misconfiguration",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Security Misconfiguration/CORS Misconfiguration"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "Force Browsing",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Force Browsing/Force Browsing"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "HTTP Smuggling",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/HTTP Smuggling/Connection & Transfer",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/HTTP Smuggling/HRS"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "Insecure Deserialization",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Insecure Deserialization/ID"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "JWT",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/JWT/JWT"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "Open Redirect",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Open Redirect/op"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "Session Hijacking",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Session Hijacking/Cookie",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Session Hijacking/HFGT"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "SQLi",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SQLi/Basic Information",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SQLi/Blind SQLi",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SQLi/Cheat sheet",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SQLi/In-Band SQLi",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SQLi/OOB SQLi",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SQLi/SQLMAP"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "SSRF",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SSRF/Server Site Request Forgery",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/SSRF/SSRF URL Validation Bypass"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "Verb Tamper",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Verb Tamper/verb tamper"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "Vulnerability Scanner",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Vulnerability Scanner/Nuclei"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "Web Cache",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Web Cache/WCD",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Web Cache/WCF",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Web Cache/WCP"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "XML",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XML/Data Transmission",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XML/DTD",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XML/XML RPC",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XML/XXE"
-                        ],
-                        "expanded": false
-                      },
-                      {
-                        "group": "XSS & CSRF",
-                        "pages": [
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS & CSRF/CSP",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS & CSRF/XSS",
-                          "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/XSS & CSRF/CSRF"
-                        ],
-                        "expanded": false
-                      },
-                      "docs/Mitre Attack/Initial Access TA0001/Exploit Public-Facing Application T1190/OWASP/Enumeration"
-                    ],
-                    "expanded": false
-                  }
-                ],
-                "expanded": false
-              },
-              {
-                "group": "Phishing",
-                "pages": [
-                  "docs/Mitre Attack/Initial Access TA0001/Phishing/Phishing Campaign"
-                ],
-                "expanded": false
-              },
-              {
-                "group": "Wi-Fi Networks T1669",
-                "pages": [
-                  "docs/Mitre Attack/Initial Access TA0001/Wi-Fi Networks T1669/Attack Wi-Fi",
-                  "docs/Mitre Attack/Initial Access TA0001/Wi-Fi Networks T1669/Wi-Fi Security Protocols"
-                ],
-                "expanded": false
-              }
-            ],
-            "expanded": false
-          },
-          {
             "group": "Lateral Movement TA0008",
             "pages": [
               {
@@ -918,12 +746,6 @@
                 "pages": [
                   "docs/Mitre Attack/Privilege Escalation TA0004/Abuse Elevation Control Mechanism/Bypass User Account Control",
                   "docs/Mitre Attack/Privilege Escalation TA0004/Abuse Elevation Control Mechanism/Sudo and Sudo Caching"
-                ],
-                "expanded": false
-              },
-              {
-                "group": "Access Token Manipulation",
-                "pages": [
                 ],
                 "expanded": false
               },
@@ -1032,6 +854,178 @@
         "pages": [
           "docs/OS Command Cheat Sheet/Linux Bash Command Cheat Sheet",
           "docs/OS Command Cheat Sheet/Windows CMD & PowerShell Cheat Sheet"
+        ]
+      },
+      {
+        "anchor": "OWASP",
+        "icon": "cat",
+        "pages":[
+                {
+                  "group": "API Abuse",
+                  "pages": [
+                    "docs/OWASP/API Abuse/API Abuse",
+                    "docs/OWASP/API Abuse/BFLA",
+                    "docs/OWASP/API Abuse/BOLA",
+                    "docs/OWASP/API Abuse/DOM vs BOM",
+                    "docs/OWASP/API Abuse/Excessive Data Exposure",
+                    "docs/OWASP/API Abuse/IDOR",
+                    "docs/OWASP/API Abuse/Mass Assignment"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "BruteForce",
+                  "pages": [
+                    "docs/OWASP/BruteForce/BruteForce",
+                    "docs/OWASP/BruteForce/OpenSSL",
+                    "docs/OWASP/BruteForce/Weak CAPTCHA Bypass"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "Code Injection",
+                  "pages": [
+                    "docs/OWASP/Code Injection/RCE (Remote Code Execution)",
+                    "docs/OWASP/Code Injection/SSTI",
+                    "docs/OWASP/Code Injection/Tools"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "Command Injection",
+                  "pages": [
+                    "docs/OWASP/Command Injection/Ci"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "Security Misconfiguration",
+                  "pages": [
+                    "docs/OWASP/Security Misconfiguration/CORS Misconfiguration"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "Force Browsing",
+                  "pages": [
+                    "docs/OWASP/Force Browsing/Force Browsing"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "HTTP Smuggling",
+                  "pages": [
+                    "docs/OWASP/HTTP Smuggling/Connection & Transfer",
+                    "docs/OWASP/HTTP Smuggling/HRS"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "Insecure Deserialization",
+                  "pages": [
+                    "docs/OWASP/Insecure Deserialization/ID"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "JWT",
+                  "pages": [
+                    "docs/OWASP/JWT/JWT"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "Open Redirect",
+                  "pages": [
+                    "docs/OWASP/Open Redirect/op"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "Session Hijacking",
+                  "pages": [
+                    "docs/OWASP/Session Hijacking/Cookie",
+                    "docs/OWASP/Session Hijacking/HFGT"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "SQLi",
+                  "pages": [
+                    "docs/OWASP/SQLi/Basic Information",
+                    "docs/OWASP/SQLi/Blind SQLi",
+                    "docs/OWASP/SQLi/Cheat sheet",
+                    "docs/OWASP/SQLi/In-Band SQLi",
+                    "docs/OWASP/SQLi/OOB SQLi",
+                    "docs/OWASP/SQLi/SQLMAP"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "SSRF",
+                  "pages": [
+                    "docs/OWASP/SSRF/Server Site Request Forgery",
+                    "docs/OWASP/SSRF/SSRF URL Validation Bypass"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "Verb Tamper",
+                  "pages": [
+                    "docs/OWASP/Verb Tamper/verb tamper"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "Vulnerability Scanner",
+                  "pages": [
+                    "docs/OWASP/Vulnerability Scanner/Nuclei"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "Web Cache",
+                  "pages": [
+                    "docs/OWASP/Web Cache/WCD",
+                    "docs/OWASP/Web Cache/WCF",
+                    "docs/OWASP/Web Cache/WCP"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "XML",
+                  "pages": [
+                    "docs/OWASP/XML/Data Transmission",
+                    "docs/OWASP/XML/DTD",
+                    "docs/OWASP/XML/XML RPC",
+                    "docs/OWASP/XML/XXE"
+                  ],
+                  "expanded": false
+                },
+                {
+                  "group": "XSS & CSRF",
+                  "pages": [
+                    "docs/OWASP/XSS & CSRF/CSP",
+                    "docs/OWASP/XSS & CSRF/XSS",
+                    "docs/OWASP/XSS & CSRF/CSRF"
+                  ],
+                  "expanded": false
+                },
+                "docs/OWASP/Enumeration"
+              ]
+      },
+      {
+        "anchor": "Wi-Fi Networks",
+        "icon": "Network",
+        "pages":[
+          {
+            "group": "Wi-Fi Networks",
+            "pages": [
+              "docs/Wi-Fi Networks/Attack Wi-Fi",
+              "docs/Wi-Fi Networks/Wi-Fi Security Protocols"
+            ],
+            "expanded": false
+          }
         ]
       }
     ]
